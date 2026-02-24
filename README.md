@@ -262,8 +262,6 @@ Distributed under the **MIT License**. See [LICENSE](./LICENSE) for details.
 
 <div align="center">
 
-**Built with 🧠 + ❤️ by [harshithreddy1903-cmyk](https://github.com/harshithreddy1903-cmyk)**
-
 *If this helped you, drop a ⭐ — it means the world!*
 
 [![Star](https://img.shields.io/github/stars/harshithreddy1903-cmyk/Telegram_Study_Bot?style=social)](https://github.com/harshithreddy1903-cmyk/Telegram_Study_Bot/stargazers)
