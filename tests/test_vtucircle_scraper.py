@@ -70,6 +70,51 @@ class TestVTUCircleScraper(unittest.TestCase):
         self.assertEqual(len(data_srcs), 1)
         self.assertIn("1sbeKzNesNniwpBpzP-DPll1YAwlHw0Op", data_srcs[0])
 
+    def test_adaptive_healing_mutated_dom(self):
+        """Verify Scrapling Adaptor heals across DOM restructuring and renamed attributes."""
+        from scrapling.parser import Adaptor
+        from scraper import SCRAPLING_DB
+
+        # Day 1: Original page layout with old class & data-src
+        original_html = """
+        <html>
+            <body>
+                <div class="original-post-content">
+                    <iframe class="old-class" data-src="https://drive.google.com/file/d/1sbeKzNesNniwpBpzP-DPll1YAwlHw0Op/preview"></iframe>
+                </div>
+            </body>
+        </html>
+        """
+        test_url = "https://vtucircle.com/bcs503-adaptive-test"
+        storage_args = {"storage_file": str(SCRAPLING_DB), "url": test_url}
+        p1 = Adaptor(original_html, url=test_url, adaptive=True, storage_args=storage_args)
+        el1 = p1.css("iframe", identifier="vtu_module_iframe", adaptive=True, auto_save=True)
+        self.assertEqual(len(el1), 1)
+
+        # Day 2: Redesigned layout, different wrapper, renamed attribute (data-embed-url instead of data-src)
+        mutated_html = """
+        <html>
+            <body>
+                <main class="new-theme-layout">
+                    <section class="redesigned-module-wrapper">
+                        <iframe class="modern-card" data-embed-url="https://drive.google.com/file/d/1sbeKzNesNniwpBpzP-DPll1YAwlHw0Op/preview"></iframe>
+                    </section>
+                </main>
+            </body>
+        </html>
+        """
+        p2 = Adaptor(mutated_html, url=test_url, adaptive=True, storage_args=storage_args)
+        healed = p2.css("iframe.old-class", identifier="vtu_module_iframe", adaptive=True)
+        self.assertEqual(len(healed), 1)
+
+        extracted_link = None
+        for val in healed[0].attrib.values():
+            if "drive.google.com" in val:
+                extracted_link = val
+                break
+        self.assertIsNotNone(extracted_link)
+        self.assertIn("1sbeKzNesNniwpBpzP-DPll1YAwlHw0Op", extracted_link)
+
     def test_live_vtucircle_discovery(self):
         """Verify live discovery of BCS503 or BCS301 modules from VTU Circle."""
         try:

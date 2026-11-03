@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 import requests
-from scrapling import Selector
+from scrapling.parser import Adaptor, Selector
 
 logger = logging.getLogger("edurag.scraper")
 if not logger.handlers:
@@ -27,6 +27,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 NOTES_DIR = ROOT_DIR / "notes"
 VTUCIRCLE_BASE = "https://vtucircle.com"
+SCRAPLING_DB = DATA_DIR / "scrapling_storage.db"
 
 
 def make_download_link(link: str) -> Optional[str]:
@@ -102,7 +103,8 @@ def save_sources(sources_dict: dict, src: Path) -> None:
 
 def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
     """
-    Search VTU Circle for a subject code using Scrapling Selector.
+    Search VTU Circle for a subject code using Scrapling's self-healing Adaptor.
+    Survives layout changes, class shifts, and WordPress wrapper migrations.
     Returns (hub_url, list_of_module_urls).
     """
     sub = sub_code.lower().strip()
@@ -112,11 +114,12 @@ def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
         if resp.status_code != 200:
             return None, []
 
-        sel = Selector(resp.text)
-        all_links = set(
-            sel.css("article a::attr(href)").getall() +
-            sel.css("main a::attr(href)").getall()
-        )
+        storage_args = {"storage_file": str(SCRAPLING_DB), "url": search_url}
+        page = Adaptor(resp.text, url=search_url, adaptive=True, storage_args=storage_args)
+
+        # Self-healing retrieval of content and article anchors
+        anchor_elements = page.css("article a, main a", identifier="vtu_search_links", adaptive=True, auto_save=True)
+        all_links = set(el.attrib.get("href", "") for el in anchor_elements if el.attrib.get("href"))
 
         # Hub candidates: subject code in url, but not module/paper/solution/category/author/pagination
         ignore_keywords = ["module", "paper", "solution", "category", "author", "program", "page/", "?s="]
@@ -130,10 +133,13 @@ def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
         if hub_url:
             hr = requests.get(hub_url, headers=header, timeout=15)
             if hr.status_code == 200:
-                h_sel = Selector(hr.text)
-                for l in h_sel.css("a::attr(href)").getall():
-                    if sub in l.lower() and "module" in l.lower():
-                        module_links.add(l)
+                h_storage_args = {"storage_file": str(SCRAPLING_DB), "url": hub_url}
+                h_page = Adaptor(hr.text, url=hub_url, adaptive=True, storage_args=h_storage_args)
+                h_anchors = h_page.css("a", identifier="vtu_hub_module_links", adaptive=True, auto_save=True)
+                for a in h_anchors:
+                    href = a.attrib.get("href", "")
+                    if sub in href.lower() and "module" in href.lower():
+                        module_links.add(href)
 
         if not hub_url and module_links:
             hub_url = search_url
@@ -146,21 +152,39 @@ def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
 
 
 def _extract_drive_link_scrapling(module_page_url: str) -> Optional[str]:
-    """Fetch module subpage and extract Google Drive iframe data-src/src via Scrapling."""
+    """
+    Fetch module subpage and extract Google Drive preview link using Scrapling's self-healing Adaptor.
+    Survives layout changes, class obfuscation, and renamed iframe attributes (data-src, data-lazy-src, etc.).
+    """
     try:
         resp = requests.get(module_page_url, headers=header, timeout=15)
         if resp.status_code != 200:
             return None
-        sel = Selector(resp.text)
-        # Check data-src first (lazy-loaded iframes), then src, then anchor links
-        candidates = (
-            sel.css("iframe::attr(data-src)").getall() +
-            sel.css("iframe::attr(src)").getall() +
-            sel.css("a::attr(href)").getall()
-        )
-        for c in candidates:
-            if "drive.google.com" in c and ("/d/" in c or "id=" in c):
-                return c
+
+        # 1. Self-healing adaptive parse with persistent fingerprint storage
+        storage_args = {"storage_file": str(SCRAPLING_DB), "url": module_page_url}
+        page = Adaptor(resp.text, url=module_page_url, adaptive=True, storage_args=storage_args)
+
+        # Query iframes with auto-healing and persistent structural fingerprinting
+        iframes = page.css("iframe", identifier="vtu_module_iframe", adaptive=True, auto_save=True)
+        for iframe in iframes:
+            # Check ALL attributes (data-src, src, data-lazy-src, data-embed-url, etc.)
+            for val in iframe.attrib.values():
+                if "drive.google.com" in val and ("/d/" in val or "id=" in val):
+                    return val
+
+        # 2. Adaptive fallback: check any embed, object, or anchor tag
+        embeds = page.css("embed, object, a", identifier="vtu_module_embeds", adaptive=True, auto_save=True)
+        for el in embeds:
+            for val in el.attrib.values():
+                if "drive.google.com" in val and ("/d/" in val or "id=" in val):
+                    return val
+
+        # 3. Direct regex scan fallback if markup was rewritten into scripts or JSON blobs
+        match = re.search(r"https://drive\.google\.com/(?:file/d/|open\?id=)[a-zA-Z0-9_-]+(?:/preview)?", resp.text)
+        if match:
+            return match.group(0)
+
     except Exception as e:
         logger.warning(f"Error extracting drive link from {module_page_url}: {e}")
     return None
