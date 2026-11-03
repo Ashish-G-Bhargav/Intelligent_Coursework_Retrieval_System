@@ -1,9 +1,15 @@
+# Core scraping & document processing
 beautifulsoup4
 chromadb
 lxml
 openai
 PyMuPDF
+pymupdf4llm
 python-dotenv
-python-telegram-bot
 requests
 sentence-transformers
+
+# Web API server (replaces Telegram bot)
+fastapi
+uvicorn[standard]
+pydantic

@@ -1,7 +1,76 @@
-﻿.env
+# ==========================================
+# EduRAG — Git Ignore Configuration
+# ==========================================
+
+# 1. Environment & Secrets (Never commit credentials)
+.env
+.env.*
+!.env.example
+
+# 2. Python Bytecode & Runtime
 __pycache__/
 *.py[cod]
-vector_db/
-notes/
+*$py.class
+*.so
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 3. Virtual Environments
 .venv/
 venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# 4. Large Data, Vector DB & Downloads
+vector_db/
+notes/
+data/notes/
+*.sqlite3
+*.db
+
+# 5. Local Ingestion & OCR Cache
+.cache/
+**/.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# 6. Temporary, Scratch & Backup Files
+scratch/
+*.bak
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+
+# 7. IDE & Editor Metadata
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 8. OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
