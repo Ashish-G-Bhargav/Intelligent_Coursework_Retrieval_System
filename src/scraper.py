@@ -1,136 +1,324 @@
-from bs4 import BeautifulSoup
-import requests
+"""
+EduRAG Coursework Scraper
+Powered by Scrapling (https://github.com/D4Vinci/Scrapling)
+Primary Source: VTU Circle (https://vtucircle.com) — 2022 Scheme Module Notes
+Secondary Fallback: Sai Vidya Institute of Technology (SVIT)
+"""
+
 import json
+import logging
 import os
+import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Union
+import requests
+from scrapling import Selector
+
+logger = logging.getLogger("edurag.scraper")
+if not logger.handlers:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 header = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT_DIR / "data"
 NOTES_DIR = ROOT_DIR / "notes"
+VTUCIRCLE_BASE = "https://vtucircle.com"
 
-def make_download_link(link):
+
+def make_download_link(link: str) -> Optional[str]:
+    """Extract Google Drive file ID and build a direct export/download URL."""
     if not link:
-        return False
-    
-    link_elems = link.split("/")
-    if "d" in link_elems:
-        uid_index = link_elems.index("d") + 1
+        return None
+    if "/d/" in link:
+        file_id = link.split("/d/")[1].split("/")[0].split("?")[0]
+        return f"https://drive.google.com/uc?export=download&id={file_id}"
+    if "id=" in link:
+        import urllib.parse
+        parsed = urllib.parse.urlparse(link)
+        params = urllib.parse.parse_qs(parsed.query)
+        file_ids = params.get("id")
+        if file_ids:
+            return f"https://drive.google.com/uc?export=download&id={file_ids[0]}"
+    return None
 
-        if uid_index < len(link_elems):
-            file_id = link_elems[uid_index]
-            return f"https://drive.google.com/uc?export=download&id={file_id}"
 
-def download_pdf(link, file_path):
+def download_pdf(link: str, file_path: Union[str, Path]) -> bool:
+    """Download a single PDF from a Google Drive link, handling confirmation cookies."""
     d_link = make_download_link(link)
-
     if not d_link:
         return False
-    
+
+    dest = Path(file_path)
+    if dest.exists() and dest.stat().st_size > 1024:
+        return True  # Already cached
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    session = requests.Session()
     try:
-        with requests.get(d_link, stream=True, headers=header, timeout=30) as response:
-            response.raise_for_status()
+        response = session.get(d_link, stream=True, headers=header, timeout=30)
+        # Google Drive warning token for large files
+        for k, v in response.cookies.items():
+            if k.startswith("download_warning"):
+                response = session.get(f"{d_link}&confirm={v}", stream=True, headers=header, timeout=30)
+                break
 
-            with open(file_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
+        response.raise_for_status()
+        with open(dest, "wb") as f:
+            for chunk in response.iter_content(chunk_size=16384):
+                f.write(chunk)
+        return True
+    except Exception as e:
+        logger.warning(f"Download failed for {link}: {e}")
+        if dest.exists() and dest.stat().st_size == 0:
+            dest.unlink(missing_ok=True)
+        return False
 
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to download file: {e}")
 
-def download(lst, sub_code):
-    os.makedirs(NOTES_DIR / sub_code, exist_ok=True)
-    for i in lst:
-        name = lst.index(i)
-        download_pdf(i, NOTES_DIR / sub_code / f"{name}.pdf")
-
-def load_sources(src):
+def load_sources(src: Path) -> dict:
     try:
         with open(src, "r") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
 
+
 sources = load_sources(DATA_DIR / "sources.json")
 notes_link = load_sources(DATA_DIR / "notes_link.json")
 
-def save_sources(sources_dict, src):
+
+def save_sources(sources_dict: dict, src: Path) -> None:
+    src.parent.mkdir(parents=True, exist_ok=True)
     with open(src, "w") as f:
         json.dump(sources_dict, f, indent=4)
 
-def get_source(branch, sub_code):
-    if sub_code in sources:
-        return sources[sub_code]
-    
-    try: 
-        urls = [
-            "https://saividya.ac.in/study-blogs",
-            f"https://saividya.ac.in/study-material-{branch}.html",
+
+# ---------------------------------------------------------------------------
+# VTU Circle Scraper (Primary)
+# ---------------------------------------------------------------------------
+
+def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
+    """
+    Search VTU Circle for a subject code using Scrapling Selector.
+    Returns (hub_url, list_of_module_urls).
+    """
+    sub = sub_code.lower().strip()
+    search_url = f"{VTUCIRCLE_BASE}/?s={sub}"
+    try:
+        resp = requests.get(search_url, headers=header, timeout=15)
+        if resp.status_code != 200:
+            return None, []
+
+        sel = Selector(resp.text)
+        all_links = set(
+            sel.css("article a::attr(href)").getall() +
+            sel.css("main a::attr(href)").getall()
+        )
+
+        # Hub candidates: subject code in url, but not module/paper/solution/category/author/pagination
+        ignore_keywords = ["module", "paper", "solution", "category", "author", "program", "page/", "?s="]
+        hub_candidates = [
+            l for l in all_links
+            if sub in l.lower() and not any(k in l.lower() for k in ignore_keywords)
         ]
+        module_links = set([l for l in all_links if sub in l.lower() and "module" in l.lower()])
 
-        for link in urls:
-            response = requests.get(link, headers=header, timeout=30)
-            if response.status_code == 404:
+        hub_url = hub_candidates[0] if hub_candidates else None
+        if hub_url:
+            hr = requests.get(hub_url, headers=header, timeout=15)
+            if hr.status_code == 200:
+                h_sel = Selector(hr.text)
+                for l in h_sel.css("a::attr(href)").getall():
+                    if sub in l.lower() and "module" in l.lower():
+                        module_links.add(l)
+
+        if not hub_url and module_links:
+            hub_url = search_url
+
+        sorted_mods = sorted(list(module_links))
+        return hub_url, sorted_mods
+    except Exception as e:
+        logger.warning(f"VTU Circle discovery error for {sub_code}: {e}")
+        return None, []
+
+
+def _extract_drive_link_scrapling(module_page_url: str) -> Optional[str]:
+    """Fetch module subpage and extract Google Drive iframe data-src/src via Scrapling."""
+    try:
+        resp = requests.get(module_page_url, headers=header, timeout=15)
+        if resp.status_code != 200:
+            return None
+        sel = Selector(resp.text)
+        # Check data-src first (lazy-loaded iframes), then src, then anchor links
+        candidates = (
+            sel.css("iframe::attr(data-src)").getall() +
+            sel.css("iframe::attr(src)").getall() +
+            sel.css("a::attr(href)").getall()
+        )
+        for c in candidates:
+            if "drive.google.com" in c and ("/d/" in c or "id=" in c):
+                return c
+    except Exception as e:
+        logger.warning(f"Error extracting drive link from {module_page_url}: {e}")
+    return None
+
+
+def _format_filename_from_slug(slug: str, idx: int) -> str:
+    """Produce clean, readable filename: e.g. bcs503-module-1-textbook -> Module_1_Textbook.pdf"""
+    clean = slug.strip("/").split("/")[-1]
+    match = re.search(r"module[_-]?(\d+)[_-]?([a-zA-Z]+)?", clean, re.IGNORECASE)
+    if match:
+        mod_num = match.group(1)
+        mod_type = (match.group(2) or "notes").capitalize()
+        return f"Module_{mod_num}_{mod_type}.pdf"
+    return f"Module_{idx + 1}.pdf"
+
+
+# ---------------------------------------------------------------------------
+# SVIT Scraper (Secondary Fallback)
+# ---------------------------------------------------------------------------
+
+def _scrape_svit_source(branch: str, sub_code: str) -> Optional[str]:
+    """Fallback search on Sai Vidya Institute of Technology portal using Scrapling."""
+    sub = sub_code.upper().strip()
+    urls = [
+        "https://saividya.ac.in/study-blogs",
+        f"https://saividya.ac.in/study-material-{branch.lower()}.html",
+    ]
+    for link in urls:
+        try:
+            resp = requests.get(link, headers=header, timeout=15)
+            if resp.status_code == 404:
                 continue
-            response.raise_for_status()
-            scrape = BeautifulSoup(response.text, "lxml")
+            resp.raise_for_status()
+            sel = Selector(resp.text)
 
-            for anchor in scrape.find_all("a", href=True):
-                text = anchor.get_text(" ", strip=True).upper()
-                href = anchor["href"]
-                if sub_code.upper() in text or sub_code.upper() in href.upper():
-                    sources[sub_code] = href
+            for a in sel.css("a"):
+                text = (a.text or "").strip().upper()
+                href = a.attrib.get("href", "")
+                if sub in text or sub in href.upper():
                     return href
 
-            for table in scrape.find_all("table"):
-                for row in table.find_all("tr"):
-                    tds = row.find_all("td")
-                    if len(tds) > 1 and sub_code.upper() in tds[0].get_text().upper():
-                        anchor = tds[1].find("a", href=True)
-                        if anchor:
-                            sources[sub_code] = anchor["href"]
-                            return anchor["href"]
+            for tr in sel.css("table tr"):
+                tds = tr.css("td")
+                if len(tds) > 1 and sub in (tds[0].text or "").upper():
+                    anchors = tds[1].css("a::attr(href)").getall()
+                    if anchors:
+                        return anchors[0]
+        except Exception as e:
+            logger.warning(f"SVIT lookup error for {sub}: {e}")
+    return None
 
-        return False
-        
-    except requests.exceptions.RequestException as e:
-        print(f"Error: Could not fetch the webpage. Details: {e}")
-        return False
 
-def get_notes(branch, sub_code):
-    source = get_source(branch, sub_code)
-
-    if not source:
-        return False
-    
-    if sub_code in notes_link:
-        return notes_link[sub_code]
-    
+def _scrape_svit_notes(source_url: str) -> List[str]:
+    """Extract iframe URLs from an SVIT blogspot/portal page using Scrapling."""
     try:
-        lst = []
-        response = requests.get(source, headers=header, timeout=30)
-        response.raise_for_status()
-        web_page = response.text
-        scrape = BeautifulSoup(web_page, "lxml")
-        iframes = scrape.find_all("iframe")
+        resp = requests.get(source_url, headers=header, timeout=15)
+        resp.raise_for_status()
+        sel = Selector(resp.text)
+        iframes = sel.css("iframe::attr(src)").getall() + sel.css("iframe::attr(data-src)").getall()
+        return [f for f in iframes if "drive.google.com" in f]
+    except Exception as e:
+        logger.warning(f"SVIT notes extraction error: {e}")
+        return []
 
-        for iframe in iframes:
-            iframe_src = iframe.get("src")
-            if iframe_src:
-                lst.append(iframe_src)
 
-        if not lst:
-            return False
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
-        notes_link[sub_code] = lst
-        download(notes_link[sub_code], sub_code)
+def get_source(branch: str, sub_code: str) -> Union[str, bool]:
+    code = sub_code.upper().strip()
+    if code in sources:
+        return sources[code]
 
-        return lst
-    except requests.exceptions.RequestException as e:
-        print(f"Error: Could not fetch the webpage. Details: {e}")
+    # 1. Try VTU Circle
+    hub_url, _ = _discover_vtucircle(code)
+    if hub_url:
+        sources[code] = hub_url
+        save_sources(sources, DATA_DIR / "sources.json")
+        return hub_url
 
-save_sources(sources, DATA_DIR / "sources.json")
-save_sources(notes_link, DATA_DIR / "notes_link.json")
+    # 2. Fallback to SVIT
+    svit_url = _scrape_svit_source(branch, code)
+    if svit_url:
+        sources[code] = svit_url
+        save_sources(sources, DATA_DIR / "sources.json")
+        return svit_url
+
+    return False
+
+
+def download(lst: List[str], sub_code: str, filenames: Optional[List[str]] = None) -> None:
+    """Download list of Google Drive PDF links concurrently."""
+    code = sub_code.upper().strip()
+    target_dir = NOTES_DIR / code
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+    tasks = []
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        for idx, link in enumerate(lst):
+            fname = filenames[idx] if filenames and idx < len(filenames) else f"Module_{idx + 1}.pdf"
+            dest = target_dir / fname
+            tasks.append(executor.submit(download_pdf, link, dest))
+
+        for future in as_completed(tasks):
+            try:
+                future.result()
+            except Exception as e:
+                logger.warning(f"Error during parallel download: {e}")
+
+
+def get_notes(branch: str, sub_code: str) -> Union[List[str], bool]:
+    code = sub_code.upper().strip()
+
+    # 1. Check existing cache & local files
+    local_path = NOTES_DIR / code
+    has_local = local_path.exists() and any(local_path.glob("*.pdf"))
+    if code in notes_link and has_local:
+        return notes_link[code]
+
+    # 2. Try VTU Circle (Primary)
+    hub_url, module_urls = _discover_vtucircle(code)
+    if module_urls:
+        drive_links = []
+        filenames = []
+
+        # Extract drive preview URLs from module pages in parallel
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            future_to_url = {executor.submit(_extract_drive_link_scrapling, m): m for m in module_urls}
+            for future in as_completed(future_to_url):
+                m_url = future_to_url[future]
+                try:
+                    d_link = future.result()
+                    if d_link:
+                        drive_links.append(d_link)
+                        filenames.append(_format_filename_from_slug(m_url, len(filenames)))
+                except Exception as e:
+                    logger.warning(f"Failed extracting drive link from {m_url}: {e}")
+
+        if drive_links:
+            if hub_url:
+                sources[code] = hub_url
+                save_sources(sources, DATA_DIR / "sources.json")
+
+            notes_link[code] = drive_links
+            save_sources(notes_link, DATA_DIR / "notes_link.json")
+
+            download(drive_links, code, filenames=filenames)
+            return drive_links
+
+    # 3. Fallback to SVIT (Secondary)
+    source = get_source(branch, code)
+    if source:
+        svit_links = _scrape_svit_notes(source)
+        if svit_links:
+            notes_link[code] = svit_links
+            save_sources(notes_link, DATA_DIR / "notes_link.json")
+            download(svit_links, code)
+            return svit_links
+
+    return False
