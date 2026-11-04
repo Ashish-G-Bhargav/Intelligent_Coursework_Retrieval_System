@@ -1,6 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="focus">
+<html lang="en" data-theme="dark">
 <head>
+  <script>
+    (function() {
+      const saved = localStorage.getItem('edurag_theme_palette');
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    })();
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EduRAG — Intelligent Coursework Retrieval System | VTU Engineering</title>
@@ -77,7 +85,7 @@
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
-  --bg-input: #f8fafc;
+  --bg-input: #ffffff;
   --bg-glass: rgba(0, 0, 0, 0.03);
 
   --theme-rgb: 15, 23, 42;
@@ -86,21 +94,21 @@
   --accent-hover: #1e293b;
   --accent-active: #020617;
 
-  --accent-muted: rgba(15, 23, 42, 0.08);
-  --accent-glow: rgba(15, 23, 42, 0.20);
-  --accent-border: rgba(15, 23, 42, 0.28);
+  --accent-muted: rgba(15, 23, 42, 0.06);
+  --accent-glow: rgba(15, 23, 42, 0.15);
+  --accent-border: rgba(15, 23, 42, 0.25);
 
   --text-primary: #09090b;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748b;
 
   --border-subtle: #e2e8f0;
   --border-default: #cbd5e1;
-  --border-glow: rgba(15, 23, 42, 0.25);
-  --border-hover: rgba(15, 23, 42, 0.50);
+  --border-glow: rgba(15, 23, 42, 0.20);
+  --border-hover: rgba(15, 23, 42, 0.40);
 
-  --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.07);
-  --shadow-glow: 0 0 20px rgba(15, 23, 42, 0.15);
+  --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 0 20px rgba(15, 23, 42, 0.10);
 }
 
 [data-theme="light"] body {
@@ -108,31 +116,433 @@
   color: #09090b;
 }
 
+/* Background elements in Light Mode */
+[data-theme="light"] .depth-orb {
+  opacity: 0.10 !important;
+  mix-blend-mode: multiply !important;
+}
+
+[data-theme="light"] #circuitCanvas {
+  opacity: 0.25 !important;
+}
+
+/* Sidebar in Light Mode */
 [data-theme="light"] .sidebar {
-  background: #ffffff;
-  border-right-color: #e2e8f0;
+  background: #ffffff !important;
+  border-right-color: #e2e8f0 !important;
 }
 
+[data-theme="light"] .sidebar-brand {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .brand-title {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .sidebar-section-title {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .nav-item {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .nav-item:hover {
+  background: #f8fafc !important;
+  color: #09090b !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .nav-item.active {
+  background: #09090b !important;
+  color: #ffffff !important;
+  border-color: #09090b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="light"] .nav-item.active .nav-icon {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .sidebar-footer {
+  background: #f8fafc !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .vtu-badge {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .vtu-badge-title {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .vtu-badge-sub {
+  color: #64748b !important;
+}
+
+/* Topbar in Light Mode */
 [data-theme="light"] .topbar {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom-color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom-color: #e2e8f0 !important;
+  backdrop-filter: blur(12px) !important;
 }
 
+[data-theme="light"] .topbar-title {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .cmd-trigger-btn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="light"] .cmd-trigger-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #09090b !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .theme-toggle-switch {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .theme-toggle-btn {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .theme-toggle-btn:hover {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .theme-toggle-btn.active {
+  background: #09090b !important;
+  color: #ffffff !important;
+}
+
+/* Hero Section & Typography in Light Mode */
+[data-theme="light"] .hero-heading,
+[data-theme="light"] #heroHeadline,
+[data-theme="light"] #heroHeadlineText,
+[data-theme="light"] .headline-word {
+  color: #09090b !important;
+  -webkit-text-fill-color: #09090b !important;
+}
+
+[data-theme="light"] .hero-text {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .hero-tagline {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] .hero-red-dot {
+  background: #ef4444 !important;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.45) !important;
+}
+
+[data-theme="light"] .zero-hallucination-pill {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  color: #047857 !important;
+  font-weight: 600 !important;
+}
+
+/* Omni Search in Light Mode */
+[data-theme="light"] .omni-search-container {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 6px 24px -4px rgba(0, 0, 0, 0.07) !important;
+}
+
+[data-theme="light"] .omni-search-container::before {
+  display: none !important;
+}
+
+[data-theme="light"] .omni-search-inner {
+  background: #ffffff !important;
+  border: none !important;
+}
+
+[data-theme="light"] .omni-search-icon {
+  color: #ef4444 !important;
+}
+
+[data-theme="light"] .omni-search-input {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .omni-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .omni-search-btn {
+  background: #09090b !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="light"] .omni-search-btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+}
+
+/* Prompt Chips (Quick Revision) in Light Mode */
+[data-theme="light"] .prompt-tag-btn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .prompt-tag-btn:hover {
+  background: #09090b !important;
+  color: #ffffff !important;
+  border-color: #09090b !important;
+}
+
+/* Stat Tiles in Light Mode */
+[data-theme="light"] .stat-tile {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .stat-tile:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .stat-digits {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .stat-desc {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .stat-icon-wrap {
+  background: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Tagline Reveal Section in Light Mode */
+[data-theme="light"] .tagline-section {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] #taglineWordsContainer,
+[data-theme="light"] .reveal-word {
+  color: #09090b !important;
+}
+
+[data-theme="light"] .tagline-section div:last-child {
+  color: #64748b !important;
+}
+
+/* Headings & Text in Light Mode */
+[data-theme="light"] .heading-5,
+[data-theme="light"] .heading-6,
+[data-theme="light"] .title-1,
+[data-theme="light"] .title-2,
+[data-theme="light"] .title-3,
+[data-theme="light"] .card-title,
+[data-theme="light"] .subject-tile-title {
+  color: #09090b !important;
+}
+
+/* Cards & Grid in Light Mode */
 [data-theme="light"] .card {
-  background: #ffffff;
-  border-color: #e2e8f0;
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
 }
 
+[data-theme="light"] .card:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Form Controls & Inputs in Light Mode */
+[data-theme="light"] .input-text,
+[data-theme="light"] .input-select,
+[data-theme="light"] .form-input,
+[data-theme="light"] .composer-textarea {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .input-text:focus,
+[data-theme="light"] .input-select:focus,
+[data-theme="light"] .form-input:focus,
+[data-theme="light"] .composer-textarea:focus {
+  border-color: #09090b !important;
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .input-text::placeholder,
+[data-theme="light"] .form-input::placeholder,
+[data-theme="light"] .composer-textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] .form-label {
+  color: #334155 !important;
+}
+
+/* Buttons in Light Mode */
+[data-theme="light"] .btn-secondary {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+  background: #e2e8f0 !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .btn-ghost {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .btn-ghost:hover {
+  background: #f1f5f9 !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .code-pill {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Chat & Workspace in Light Mode */
+[data-theme="light"] .chat-header,
+[data-theme="light"] .chat-composer-box,
+[data-theme="light"] .workspace-bar,
+[data-theme="light"] .pdf-header-bar,
+[data-theme="light"] .modal-bar {
+  background: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #09090b !important;
+}
+
+[data-theme="light"] .chat-row.user .chat-message-bubble {
+  background: #09090b !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .chat-row.bot .chat-message-bubble {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #09090b !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] .chat-row.user .chat-avatar-box {
+  background: #09090b !important;
+  color: #ffffff !important;
+  border-color: #09090b !important;
+}
+
+/* Modal Sheet & Dropzone in Light Mode */
 [data-theme="light"] .modal-sheet {
-  background: #ffffff;
-  border-color: #cbd5e1;
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="light"] .upload-dropzone {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .upload-dropzone:hover,
+[data-theme="light"] .upload-dropzone.dragover {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.04) !important;
 }
 
 [data-theme="light"] .toast-bubble {
-  background: rgba(255, 255, 255, 0.98);
-  color: #09090b;
-  border-color: #cbd5e1;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.98) !important;
+  color: #09090b !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+
+/* Command Palette in Light Mode */
+[data-theme="light"] .cmd-search-field {
+  color: #09090b !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+[data-theme="light"] .cmd-search-field::placeholder {
+  color: #94a3b8 !important;
+}
+[data-theme="light"] .cmd-row {
+  color: #334155 !important;
+}
+[data-theme="light"] .cmd-row:hover,
+[data-theme="light"] .cmd-row.selected {
+  background: #f1f5f9 !important;
+  color: #09090b !important;
+}
+[data-theme="light"] .cmd-row-label {
+  color: #09090b !important;
+}
+[data-theme="light"] .kbd-badge {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+/* Workspace Panes & Ratio in Light Mode */
+[data-theme="light"] .ws-chat-column {
+  background: #ffffff !important;
+  border-right-color: #e2e8f0 !important;
+}
+[data-theme="light"] .ws-pdf-column {
+  background: #f1f5f9 !important;
+}
+[data-theme="light"] .ratio-btn {
+  color: #475569 !important;
+}
+[data-theme="light"] .ratio-btn:hover {
+  background: #f1f5f9 !important;
+  color: #09090b !important;
+}
+[data-theme="light"] .ratio-btn.active {
+  background: #09090b !important;
+  color: #ffffff !important;
+}
+
+/* Citations & Subject Tiles in Light Mode */
+[data-theme="light"] .citation-tag {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+[data-theme="light"] .citation-tag:hover {
+  background: #e2e8f0 !important;
+}
+[data-theme="light"] .citation-strip {
+  border-top-color: #e2e8f0 !important;
+}
+[data-theme="light"] .subject-tile-meta {
+  color: #64748b !important;
 }
 
 /* Theme Toggle Control */
@@ -174,6 +584,26 @@
 [data-theme="light"] .theme-toggle-btn.active {
   background: #09090b;
   color: #ffffff;
+}
+
+
+/* Standard form input */
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-inner-sm);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-muted);
 }
 
 /* Upload Dropzone Styles */
@@ -1915,7 +2345,7 @@ html, body {
 
           <!-- Staggered Word Reveal Section -->
           <section class="tagline-section reveal-on-scroll" id="taglineRevealSection">
-            <div id="taglineWordsContainer" style="font-size: 20px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; line-height: 1.4; max-width: 820px; margin: 0 auto;">
+            <div id="taglineWordsContainer" style="font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1.4; max-width: 820px; margin: 0 auto;">
               Official VTU coursework notes indexed with millisecond precision and zero hallucination.
             </div>
             <div style="font-size: 12px; color: var(--text-secondary); margin-top: 10px;">
@@ -2008,7 +2438,7 @@ html, body {
           <div class="chat-container">
             <div class="chat-header">
               <div>
-                <div style="font-weight: 700; font-size: 14px; color: #fff;">Ask AI Study Assistant</div>
+                <div style="font-weight: 700; font-size: 14px; color: var(--text-primary);">Ask AI Study Assistant</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary);">Grounded in official Visvesvaraya Technological University syllabus notes</div>
               </div>
               <button class="btn btn-sm btn-secondary" onclick="resetChatHistory()">Clear Chat</button>
@@ -2133,7 +2563,7 @@ html, body {
                 <div class="pdf-header-bar" id="wsPdfBar" style="display: none;">
                   <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="code-pill" id="wsActiveSubCode">CODE</span>
-                    <span id="wsActiveDocName" style="font-weight: 600; color: #fff;">Document</span>
+                    <span id="wsActiveDocName" style="font-weight: 600; color: var(--text-primary);">Document</span>
                   </div>
                   <span class="code-pill" id="wsActivePageIndicator">p. 1 ✓</span>
                 </div>
@@ -2490,9 +2920,11 @@ let currentTheme = localStorage.getItem('edurag_theme_palette') || 'dark';
 if (currentTheme !== 'dark' && currentTheme !== 'light') {
   currentTheme = 'dark';
 }
+let currentThemeRgb = currentTheme === 'light' ? [15, 23, 42] : [239, 68, 68];
 
 function switchThemePalette(themeId) {
   currentTheme = (themeId === 'light') ? 'light' : 'dark';
+  currentThemeRgb = (currentTheme === 'light') ? [15, 23, 42] : [239, 68, 68];
   document.documentElement.setAttribute('data-theme', currentTheme);
   localStorage.setItem('edurag_theme_palette', currentTheme);
 
@@ -2500,7 +2932,6 @@ function switchThemePalette(themeId) {
   const btnLight = $('#btn-theme-light');
   if (btnDark) btnDark.classList.toggle('active', currentTheme === 'dark');
   if (btnLight) btnLight.classList.toggle('active', currentTheme === 'light');
-  // Theme changed silently without pop-up (Requirement 3)
 }
 window.switchThemePalette = switchThemePalette;
 
@@ -3799,7 +4230,7 @@ function initCircuitCanvas() {
         const dy = a.y - b.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < MAX_DIST) {
-          const alpha = (1 - dist / MAX_DIST) * 0.15;
+          const alpha = (1 - dist / MAX_DIST) * (currentTheme === 'light' ? 0.06 : 0.15);
           ctx.strokeStyle = `rgba(${currentThemeRgb[0]}, ${currentThemeRgb[1]}, ${currentThemeRgb[2]}, ${alpha})`;
           ctx.lineWidth = 1;
           ctx.beginPath();
