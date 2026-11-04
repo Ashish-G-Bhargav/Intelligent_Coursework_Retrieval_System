@@ -144,8 +144,9 @@ def _discover_vtucircle(sub_code: str) -> Tuple[Optional[str], List[str]]:
         if not hub_url and module_links:
             hub_url = search_url
 
-        sorted_mods = sorted(list(module_links))
-        return hub_url, sorted_mods
+        # Normalize trailing slashes to eliminate duplicates
+        normalized_mods = sorted(list(set(m.rstrip("/") for m in module_links)))
+        return hub_url, normalized_mods
     except Exception as e:
         logger.warning(f"VTU Circle discovery error for {sub_code}: {e}")
         return None, []
