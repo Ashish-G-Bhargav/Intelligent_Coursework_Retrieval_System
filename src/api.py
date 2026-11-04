@@ -14,11 +14,19 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from db import (
+    calculate_sha256,
+    insert_document,
+    list_documents,
+    get_document,
+    delete_document,
+    update_document_index_status,
+)
 
 # ---------------------------------------------------------------------------
 # Path resolution
@@ -312,6 +320,142 @@ def download_note_file(subject_code: str, filename: str) -> FileResponse:
         raise HTTPException(status_code=404, detail="File not found")
     return FileResponse(
         path=str(file_path),
+        media_type="application/pdf",
+        content_disposition_type="inline",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Upload & Document Management Endpoints
+# ---------------------------------------------------------------------------
+UPLOADS_DIR = ROOT_DIR / "data" / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _index_uploaded_pdf_task(doc_id: str, file_path_str: str, subject_code: str):
+    """Background task to extract and index uploaded PDF using the Triage Engine."""
+    try:
+        from rag import pdf_2_md, add_to_vdb
+        file_path = Path(file_path_str)
+        md = pdf_2_md(file_path, subject_code)
+        if md and len(md) == 3:
+            add_to_vdb(md)
+            chunk_count = len(md[0])
+            import pymupdf
+            doc = pymupdf.open(file_path)
+            page_count = len(doc)
+            update_document_index_status(doc_id, is_indexed=1, chunk_count=chunk_count, page_count=page_count)
+            logger.info(f"Successfully indexed uploaded document {doc_id} ({chunk_count} chunks)")
+    except Exception as e:
+        logger.error(f"Failed indexing uploaded document {doc_id}: {e}")
+
+
+@app.post("/api/upload")
+def upload_study_material(
+    file: UploadFile = File(...),
+    scheme: str = Form("2022 Scheme"),
+    subject_code: str = Form(...),
+    sem: str = Form("Sem 5"),
+    material_type: str = Form("Study Material"),
+    title: Optional[str] = Form(None),
+) -> dict:
+    """Upload study material / question paper PDF and register in SQLite and ChromaDB."""
+    filename = file.filename or "document.pdf"
+    if not filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files (.pdf) are supported.")
+
+    content = file.file.read()
+    if not content.startswith(b"%PDF-"):
+        raise HTTPException(status_code=400, detail="Invalid PDF file. Header missing %PDF- signature.")
+
+    sub_clean = subject_code.upper().strip()
+    clean_scheme = scheme.strip() or "2022 Scheme"
+    clean_sem = sem.strip() or "Sem 5"
+    clean_type = material_type.strip() or "Study Material"
+    clean_title = (title or "").strip() or filename
+
+    # Compute SHA256 for deduplication
+    file_hash = calculate_sha256(content)
+
+    # Save to disk
+    sub_upload_dir = UPLOADS_DIR / sub_clean
+    sub_upload_dir.mkdir(parents=True, exist_ok=True)
+    safe_filename = f"{file_hash[:8]}_{filename.replace(' ', '_')}"
+    saved_path = sub_upload_dir / safe_filename
+
+    if not saved_path.exists():
+        with open(saved_path, "wb") as f:
+            f.write(content)
+
+    # Count pages
+    page_count = 0
+    try:
+        import pymupdf
+        pdoc = pymupdf.open(stream=content, filetype="pdf")
+        page_count = len(pdoc)
+    except Exception:
+        pass
+
+    # Insert into SQLite
+    doc_record = insert_document(
+        scheme=clean_scheme,
+        subject_code=sub_clean,
+        sem=clean_sem,
+        material_type=clean_type,
+        title=clean_title,
+        file_name=filename,
+        file_path=str(saved_path),
+        file_size_bytes=len(content),
+        file_hash=file_hash,
+        page_count=page_count,
+        is_indexed=0,
+        chunk_count=0,
+    )
+
+    # Dispatch background indexing into ChromaDB in a daemon thread
+    threading.Thread(
+        target=_index_uploaded_pdf_task,
+        args=(doc_record["id"], str(saved_path), sub_clean),
+        daemon=True,
+    ).start()
+
+    return {
+        "status": "ok",
+        "message": f"Successfully uploaded {filename}",
+        "document": doc_record,
+    }
+
+
+@app.get("/api/documents")
+def get_documents(
+    subject_code: Optional[str] = None,
+    material_type: Optional[str] = None,
+) -> dict:
+    """List uploaded study materials and question papers."""
+    docs = list_documents(subject_code=subject_code, material_type=material_type)
+    return {"documents": docs, "count": len(docs)}
+
+
+@app.delete("/api/documents/{doc_id}")
+def remove_document(doc_id: str) -> dict:
+    """Delete a document from SQLite and filesystem."""
+    deleted_path = delete_document(doc_id)
+    if not deleted_path:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"status": "ok", "message": f"Document {doc_id} deleted."}
+
+
+@app.get("/api/documents/{doc_id}/view")
+def view_document_pdf(doc_id: str) -> FileResponse:
+    """Stream uploaded PDF for inline viewing in the workspace."""
+    doc = get_document(doc_id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    path = Path(doc["file_path"])
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="File missing from disk")
+    return FileResponse(
+        path=str(path),
         media_type="application/pdf",
         content_disposition_type="inline",
     )

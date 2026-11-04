@@ -19,41 +19,37 @@
 ══════════════════════════════════════════════════════════════ */
 
 /* ══════════════════════════════════════════════════════════════
-   PSYCHOLOGY STUDY THEMES (CALIBRATED ATMOSPHERES)
-   Theme 1: focus   - 🌿 Deep Focus (Emerald Forest: lowers anxiety & cognitive load)
-   Theme 2: clarity - 🌊 Calm Clarity (Ocean Cyan: analytical stamina & memory)
-   Theme 3: sprint  - ⚡ Exam Sprint (Cyber Crimson: high alertness & urgency)
-   Theme 4: flow    - 🔮 Flow State (Nebula Violet: deep algorithmic concentration)
-   Theme 5: solar   - ☀️ Solar Energy (Warm Amber: dopamine boost & burnout relief)
-   Theme 6: lofi    - ☕ Lofi Study Cafe (Warm Sepia: zero blue light & eye comfort)
+   DUAL THEME ENGINE:
+   1. Dark Mode  — Cyber Red & Obsidian Black (High-Alert Focus)
+   2. Light Mode — Editorial Black & Crisp White (Maximum Daylight Contrast)
 ══════════════════════════════════════════════════════════════ */
 
-:root {
-  --bg-base: #03140d;
-  --bg-surface: #062016;
-  --bg-card: rgba(8, 38, 26, 0.75);
-  --bg-card-hover: rgba(12, 48, 33, 0.88);
-  --bg-input: rgba(6, 32, 22, 0.95);
-  --bg-glass: rgba(255, 255, 255, 0.05);
+:root, [data-theme="dark"] {
+  --bg-base: #000000;
+  --bg-surface: #0a0a0d;
+  --bg-card: rgba(16, 16, 22, 0.85);
+  --bg-card-hover: rgba(26, 26, 34, 0.95);
+  --bg-input: #121217;
+  --bg-glass: rgba(255, 255, 255, 0.04);
   
-  --theme-rgb: 16, 185, 129;
-  --theme-accent-rgb: 52, 211, 153;
-  --accent: #10b981;
-  --accent-hover: #34d399;
-  --accent-active: #059669;
+  --theme-rgb: 239, 68, 68;
+  --theme-accent-rgb: 248, 113, 113;
+  --accent: #ef4444;
+  --accent-hover: #f87171;
+  --accent-active: #dc2626;
   
-  --accent-muted: rgba(16, 185, 129, 0.14);
-  --accent-glow: rgba(16, 185, 129, 0.40);
-  --accent-border: rgba(16, 185, 129, 0.38);
+  --accent-muted: rgba(239, 68, 68, 0.14);
+  --accent-glow: rgba(239, 68, 68, 0.40);
+  --accent-border: rgba(239, 68, 68, 0.38);
   
-  --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --text-muted: #52637a;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
   
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-default: rgba(255, 255, 255, 0.09);
-  --border-glow: rgba(var(--theme-rgb), 0.25);
-  --border-hover: rgba(var(--theme-rgb), 0.50);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.14);
+  --border-glow: rgba(239, 68, 68, 0.35);
+  --border-hover: rgba(239, 68, 68, 0.60);
   
   --success: #10b981;
   --warning: #f59e0b;
@@ -68,113 +64,137 @@
   --r-inner-sm: 6px;
   --r-pill: 9999px;
   
-  --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.55);
-  --shadow-glow: 0 0 25px rgba(var(--theme-rgb), 0.3);
+  --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.70);
+  --shadow-glow: 0 0 25px rgba(239, 68, 68, 0.35);
   
   --font-main: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* 🌿 1. Deep Focus (Emerald Forest) */
-[data-theme="focus"] {
-  --bg-base: #03140d;
-  --bg-surface: #062016;
-  --bg-card: rgba(8, 38, 26, 0.75);
-  --bg-card-hover: rgba(12, 48, 33, 0.88);
-  --bg-input: rgba(6, 32, 22, 0.95);
-  --accent: #10b981;
-  --accent-hover: #34d399;
-  --accent-active: #059669;
-  --accent-glow: rgba(16, 185, 129, 0.40);
-  --accent-border: rgba(16, 185, 129, 0.38);
-  --accent-muted: rgba(16, 185, 129, 0.14);
-  --theme-rgb: 16, 185, 129;
-  --theme-accent-rgb: 52, 211, 153;
+/* ☀️ 2. Editorial Light Mode (White & Black) */
+[data-theme="light"] {
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #f8fafc;
+  --bg-glass: rgba(0, 0, 0, 0.03);
+
+  --theme-rgb: 15, 23, 42;
+  --theme-accent-rgb: 220, 38, 38;
+  --accent: #0f172a;
+  --accent-hover: #1e293b;
+  --accent-active: #020617;
+
+  --accent-muted: rgba(15, 23, 42, 0.08);
+  --accent-glow: rgba(15, 23, 42, 0.20);
+  --accent-border: rgba(15, 23, 42, 0.28);
+
+  --text-primary: #09090b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --border-glow: rgba(15, 23, 42, 0.25);
+  --border-hover: rgba(15, 23, 42, 0.50);
+
+  --shadow-card: 0 4px 20px 0 rgba(0, 0, 0, 0.07);
+  --shadow-glow: 0 0 20px rgba(15, 23, 42, 0.15);
 }
 
-/* 🌊 2. Calm Clarity (Ocean Cyan) */
-[data-theme="clarity"], [data-theme="ivory"] {
-  --bg-base: #030e1a;
-  --bg-surface: #06182c;
-  --bg-card: rgba(8, 32, 58, 0.75);
-  --bg-card-hover: rgba(12, 44, 78, 0.88);
-  --bg-input: rgba(6, 26, 48, 0.95);
-  --accent: #00d4ff;
-  --accent-hover: #38bdf8;
-  --accent-active: #0284c7;
-  --accent-glow: rgba(var(--theme-rgb), 0.40);
-  --accent-border: rgba(var(--theme-rgb), 0.38);
-  --accent-muted: rgba(var(--theme-rgb), 0.14);
-  --theme-rgb: 0, 212, 255;
-  --theme-accent-rgb: 56, 189, 248;
+[data-theme="light"] body {
+  background: #f8fafc;
+  color: #09090b;
 }
 
-/* ⚡ 3. Exam Sprint (Cyber Crimson) */
-[data-theme="sprint"], [data-theme="crimson"] {
-  --bg-base: #140407;
-  --bg-surface: #22080d;
-  --bg-card: rgba(44, 12, 20, 0.75);
-  --bg-card-hover: rgba(60, 18, 28, 0.88);
-  --bg-input: rgba(32, 8, 14, 0.95);
-  --accent: #ff334b;
-  --accent-hover: #ff4d63;
-  --accent-active: #e0283e;
-  --accent-glow: rgba(255, 51, 75, 0.40);
-  --accent-border: rgba(255, 51, 75, 0.38);
-  --accent-muted: rgba(255, 51, 75, 0.14);
-  --theme-rgb: 255, 51, 75;
-  --theme-accent-rgb: 255, 77, 99;
+[data-theme="light"] .sidebar {
+  background: #ffffff;
+  border-right-color: #e2e8f0;
 }
 
-/* 🔮 4. Flow State (Nebula Violet) */
-[data-theme="flow"], [data-theme="merlot"] {
-  --bg-base: #0e051a;
-  --bg-surface: #18092e;
-  --bg-card: rgba(34, 14, 60, 0.75);
-  --bg-card-hover: rgba(48, 20, 84, 0.88);
-  --bg-input: rgba(26, 10, 46, 0.95);
-  --accent: #a855f7;
-  --accent-hover: #c084fc;
-  --accent-active: #9333ea;
-  --accent-glow: rgba(168, 85, 247, 0.40);
-  --accent-border: rgba(168, 85, 247, 0.38);
-  --accent-muted: rgba(168, 85, 247, 0.14);
-  --theme-rgb: 168, 85, 247;
-  --theme-accent-rgb: 192, 132, 252;
+[data-theme="light"] .topbar {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom-color: #e2e8f0;
 }
 
-/* ☀️ 5. Solar Energy (Warm Amber Gold) */
-[data-theme="solar"], [data-theme="stealth"] {
-  --bg-base: #140c03;
-  --bg-surface: #241506;
-  --bg-card: rgba(48, 28, 10, 0.75);
-  --bg-card-hover: rgba(66, 38, 14, 0.88);
-  --bg-input: rgba(36, 20, 8, 0.95);
-  --accent: #f59e0b;
-  --accent-hover: #fbbf24;
-  --accent-active: #d97706;
-  --accent-glow: rgba(245, 158, 11, 0.40);
-  --accent-border: rgba(245, 158, 11, 0.38);
-  --accent-muted: rgba(245, 158, 11, 0.14);
-  --theme-rgb: 245, 158, 11;
-  --theme-accent-rgb: 251, 191, 36;
+[data-theme="light"] .card {
+  background: #ffffff;
+  border-color: #e2e8f0;
 }
 
-/* ☕ 6. Lofi Study Cafe (Warm Sepia Latte) */
-[data-theme="lofi"] {
-  --bg-base: #14100c;
-  --bg-surface: #201a14;
-  --bg-card: rgba(42, 34, 28, 0.75);
-  --bg-card-hover: rgba(58, 46, 38, 0.88);
-  --bg-input: rgba(32, 25, 19, 0.95);
-  --accent: #e2a365;
-  --accent-hover: #f0bb87;
-  --accent-active: #c88344;
-  --accent-glow: rgba(226, 163, 101, 0.40);
-  --accent-border: rgba(226, 163, 101, 0.38);
-  --accent-muted: rgba(226, 163, 101, 0.14);
-  --theme-rgb: 226, 163, 101;
-  --theme-accent-rgb: 240, 187, 135;
+[data-theme="light"] .modal-sheet {
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+[data-theme="light"] .toast-bubble {
+  background: rgba(255, 255, 255, 0.98);
+  color: #09090b;
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Theme Toggle Control */
+.theme-toggle-switch {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--r-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+.theme-toggle-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(var(--theme-rgb), 0.35);
+}
+
+[data-theme="light"] .theme-toggle-btn.active {
+  background: #09090b;
+  color: #ffffff;
+}
+
+/* Upload Dropzone Styles */
+.upload-dropzone {
+  border: 2px dashed var(--border-default);
+  border-radius: var(--r-inner-lg);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-surface);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.upload-dropzone:hover, .upload-dropzone.dragover {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
+.dropzone-icon {
+  color: var(--accent);
+  margin-bottom: 8px;
 }
 
 /* Base Reset & Core Styles */
@@ -1766,6 +1786,11 @@ html, body {
           <span class="nav-text">Scrape & Index</span>
         </button>
 
+        <button class="nav-item" data-page="upload" onclick="navigate(this, 'upload')">
+          <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></span>
+          <span class="nav-text">Upload Materials</span>
+        </button>
+
         <button class="nav-item" data-page="notes" onclick="navigate(this, 'notes')">
           <span class="nav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg></span>
           <span class="nav-text">Notes Library</span>
@@ -1790,40 +1815,17 @@ html, body {
         <div class="topbar-title" id="topbarTitle">Dashboard</div>
 
         <div class="topbar-actions">
-          <!-- Theme Palette Selector: Psychology-Backed Study Modes -->
-          <div class="palette-picker" title="Select Study Mode (Color Psychology for Engineering Students)">
-            <button class="palette-btn active" id="btn-focus" data-theme-id="focus" onclick="switchThemePalette('focus')" title="Deep Focus — Emerald (Reduces Anxiety & Lowers Cognitive Load)">
-              <span class="palette-swatch" style="background: #10b981;"></span><span class="theme-name">Focus</span>
+          <!-- Theme Toggle Control (Dark: Red & Black | Light: White & Black) -->
+          <div class="theme-toggle-switch" title="Toggle Theme (Dark / Light)">
+            <button class="theme-toggle-btn active" id="btn-theme-dark" onclick="switchThemePalette('dark')" title="Dark Mode (Red & Black)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              <span>Dark</span>
             </button>
-            <button class="palette-btn" id="btn-clarity" data-theme-id="clarity" onclick="switchThemePalette('clarity')" title="Calm Clarity — Cyan (Memory Consolidation & Analytical Focus)">
-              <span class="palette-swatch" style="background: #00d4ff;"></span><span class="theme-name">Clarity</span>
-            </button>
-            <button class="palette-btn" id="btn-sprint" data-theme-id="sprint" onclick="switchThemePalette('sprint')" title="Exam Sprint — Crimson (High Alertness & Urgent Timed Revision)">
-              <span class="palette-swatch" style="background: #ff334b;"></span><span class="theme-name">Sprint</span>
-            </button>
-            <button class="palette-btn" id="btn-flow" data-theme-id="flow" onclick="switchThemePalette('flow')" title="Flow State — Nebula Purple (Deep Concentration for Coding & Algorithms)">
-              <span class="palette-swatch" style="background: #a855f7;"></span><span class="theme-name">Flow</span>
-            </button>
-            <button class="palette-btn" id="btn-solar" data-theme-id="solar" onclick="switchThemePalette('solar')" title="Solar Energy — Amber Gold (Dopamine Boost & Fatigue Relief)">
-              <span class="palette-swatch" style="background: #f59e0b;"></span><span class="theme-name">Solar</span>
-            </button>
-            <button class="palette-btn" id="btn-lofi" data-theme-id="lofi" onclick="switchThemePalette('lofi')" title="Lofi Cafe — Warm Sepia (Low Eye Strain & Night Reading)">
-              <span class="palette-swatch" style="background: #e2a365;"></span><span class="theme-name">Lofi</span>
+            <button class="theme-toggle-btn" id="btn-theme-light" onclick="switchThemePalette('light')" title="Light Mode (White & Black)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <span>Light</span>
             </button>
           </div>
-
-          <!-- Command Palette Trigger -->
-          <button class="cmd-trigger-btn" onclick="openCmdPalette()" title="Quick Navigation (Ctrl+K)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Command</span>
-            <kbd class="kbd-badge">Ctrl+K</kbd>
-          </button>
-
-          <!-- API Health Indicator -->
-          <div class="health-badge" id="systemHealthBadge">
-            <span class="breathing-pulse-dot"></span> Checking API...
-          </div>
-        </div>
       </header>
 
       <!-- Scrollable Page Container -->
@@ -2271,6 +2273,119 @@ html, body {
         </div>
 
         <!-- ══════════ 6. NOTES LIBRARY ══════════ -->
+        
+        <!-- ════════ PAGE 7: UPLOAD MATERIALS ════════ -->
+        <div class="page" id="page-upload">
+          <div class="page-header">
+            <div>
+              <div class="tag-chip tag-red" style="margin-bottom: 8px;">DOCUMENT INGESTION VAULT</div>
+              <h2 class="title-2">Upload Study Material & Question Papers</h2>
+              <p class="body-sm" style="margin-top: 4px;">Upload official VTU course notes, model exam question papers, and scheme copies. Strictly PDF files only.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm" onclick="loadUploadedDocuments()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <span>Refresh Vault</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
+            <!-- Left: Upload Form -->
+            <div class="card" style="padding: 22px;">
+              <div class="card-title" style="margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between;">
+                <span>Ingest Document</span>
+                <span class="badge" style="background: rgba(var(--theme-rgb), 0.15); color: var(--accent); font-size: 11px; padding: 2px 8px; border-radius: 4px;">PDF Only</span>
+              </div>
+
+              <!-- Drag & Drop Dropzone -->
+              <div class="upload-dropzone" id="uploadDropzone" onclick="$('#pdfFileInput').click()">
+                <input type="file" id="pdfFileInput" accept=".pdf,application/pdf" style="display: none;" onchange="handleFileSelect(event)" />
+                <div class="dropzone-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="12" y2="12"></line><line x1="15" y1="15" x2="12" y2="12"></line></svg>
+                </div>
+                <div class="dropzone-text" id="dropzoneText">
+                  <div style="font-weight: 600; font-size: 13px; color: var(--text-primary); margin-bottom: 4px;">Drag & drop your PDF file here</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">or <span style="color: var(--accent); text-decoration: underline;">click to browse</span> (Max 50MB)</div>
+                </div>
+              </div>
+
+              <div id="selectedFileInfo" style="display: none; margin-top: 12px; padding: 10px 12px; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--r-inner-sm); align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  <span id="selectedFileName" style="font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;"></span>
+                </div>
+                <button type="button" onclick="clearSelectedFile(event)" style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+              </div>
+
+              <!-- Metadata Inputs with Requested Placeholders -->
+              <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                  <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Scheme</label>
+                  <input type="text" id="inputUploadScheme" class="form-input" placeholder="Scheme (e.g. 2022 Scheme, 2018 Scheme)" value="2022 Scheme" style="width: 100%;" />
+                </div>
+
+                <div>
+                  <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Subject / Code</label>
+                  <input type="text" id="inputUploadSubjectCode" class="form-input" placeholder="Subject / Code (e.g. BCS502, BCS503)" style="width: 100%; text-transform: uppercase;" />
+                </div>
+
+                <div>
+                  <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Semester</label>
+                  <input type="text" id="inputUploadSem" class="form-input" placeholder="Semester (e.g. Sem 5, 5th Sem)" value="Sem 5" style="width: 100%;" />
+                </div>
+
+                <div>
+                  <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Material Type</label>
+                  <select id="inputUploadType" class="form-input" style="width: 100%;">
+                    <option value="Question Paper">Question Paper</option>
+                    <option value="Study Material" selected>Study Material</option>
+                    <option value="Model Question Paper">Model Question Paper</option>
+                    <option value="Syllabus Copy">Syllabus Copy</option>
+                    <option value="Lab Manual / Assignment">Lab Manual / Assignment</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="form-label" style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block;">Document Title (Optional)</label>
+                  <input type="text" id="inputUploadTitle" class="form-input" placeholder="Document Title / Note (e.g. 2024 Exam Paper with Solutions)" style="width: 100%;" />
+                </div>
+
+                <button id="btnSubmitUpload" class="btn btn-primary" onclick="submitPdfUpload()" style="width: 100%; margin-top: 6px; padding: 10px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  <span>Upload & Index PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Document Vault List -->
+            <div class="card" style="padding: 22px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                <div class="card-title" style="margin-bottom: 0;">Vault Materials (<span id="vaultDocCount">0</span>)</div>
+                <div style="display: flex; gap: 8px;">
+                  <input type="text" id="vaultSearchInput" class="form-input" placeholder="Filter by subject or title..." oninput="filterVaultDocuments()" style="width: 200px; padding: 6px 12px; font-size: 12px;" />
+                  <select id="vaultTypeFilter" class="form-input" onchange="filterVaultDocuments()" style="width: 150px; padding: 6px 12px; font-size: 12px;">
+                    <option value="">All Types</option>
+                    <option value="Question Paper">Question Papers</option>
+                    <option value="Study Material">Study Materials</option>
+                    <option value="Model Question Paper">Model Papers</option>
+                    <option value="Syllabus Copy">Syllabus</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="vaultDocumentsList" style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; opacity: 0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  <div>No uploaded study materials yet. Use the form on the left to ingest PDFs.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="page" id="page-notes">
           <div style="margin-bottom: 24px;">
             <h1 class="heading-5" style="margin-bottom: 6px;">Notes Document Library</h1>
@@ -2370,57 +2485,33 @@ const escapeText = str => {
   return div.innerHTML;
 };
 
-/* ─── THEME PALETTE MANAGER (PSYCHOLOGY STUDY MODES) ─── */
-const THEME_RGBS = {
-  focus: [16, 185, 129],
-  clarity: [0, 212, 255],
-  ivory: [0, 212, 255],
-  sprint: [255, 51, 75],
-  crimson: [255, 51, 75],
-  flow: [168, 85, 247],
-  merlot: [168, 85, 247],
-  solar: [245, 158, 11],
-  stealth: [245, 158, 11],
-  lofi: [226, 163, 101]
-};
-
-const THEME_LABELS = {
-  focus: '🌿 Deep Focus (Emerald — Lowers anxiety, ideal for heavy theory reading)',
-  clarity: '🌊 Calm Clarity (Electric Cyan — Enhances cognitive recall & logic)',
-  sprint: '⚡ Exam Sprint (Cyber Crimson — High-alert precision for timed prep)',
-  crimson: '⚡ Exam Sprint (Cyber Crimson — High-alert precision for timed prep)',
-  flow: '🔮 Flow State (Nebula Violet — Immersive algorithmic concentration)',
-  merlot: '🔮 Flow State (Nebula Violet — Immersive algorithmic concentration)',
-  solar: '☀️ Solar Energy (Amber Gold — Dopamine boost to combat burnout)',
-  stealth: '☀️ Solar Energy (Amber Gold — Dopamine boost to combat burnout)',
-  lofi: '☕ Lofi Study Cafe (Warm Sepia — Gentle contrast to protect tired eyes)'
-};
-
-let currentTheme = localStorage.getItem('edurag_theme_palette') || 'focus';
-if (currentTheme === 'crimson') currentTheme = 'sprint';
-if (currentTheme === 'stealth') currentTheme = 'solar';
-if (currentTheme === 'merlot') currentTheme = 'flow';
-if (currentTheme === 'ivory') currentTheme = 'clarity';
-
-let currentThemeRgb = THEME_RGBS[currentTheme] || [16, 185, 129];
+/* ─── DUAL THEME ENGINE (DARK: RED & BLACK | LIGHT: WHITE & BLACK) ─── */
+let currentTheme = localStorage.getItem('edurag_theme_palette') || 'dark';
+if (currentTheme !== 'dark' && currentTheme !== 'light') {
+  currentTheme = 'dark';
+}
 
 function switchThemePalette(themeId) {
-  if (themeId === 'crimson') themeId = 'sprint';
-  if (themeId === 'stealth') themeId = 'solar';
-  if (themeId === 'merlot') themeId = 'flow';
-  if (themeId === 'ivory') themeId = 'clarity';
+  currentTheme = (themeId === 'light') ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('edurag_theme_palette', currentTheme);
 
-  currentTheme = themeId;
-  currentThemeRgb = THEME_RGBS[themeId] || [16, 185, 129];
-  document.documentElement.setAttribute('data-theme', themeId);
-  localStorage.setItem('edurag_theme_palette', themeId);
-
-  $$('.palette-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-theme-id') === themeId);
-  });
-  displayToast('Study Mode Activated', THEME_LABELS[themeId] || themeId.toUpperCase(), 'info');
+  const btnDark = $('#btn-theme-dark');
+  const btnLight = $('#btn-theme-light');
+  if (btnDark) btnDark.classList.toggle('active', currentTheme === 'dark');
+  if (btnLight) btnLight.classList.toggle('active', currentTheme === 'light');
+  // Theme changed silently without pop-up (Requirement 3)
 }
 window.switchThemePalette = switchThemePalette;
+
+// Initialize theme on load
+document.documentElement.setAttribute('data-theme', currentTheme);
+setTimeout(() => {
+  const btnDark = $('#btn-theme-dark');
+  const btnLight = $('#btn-theme-light');
+  if (btnDark) btnDark.classList.toggle('active', currentTheme === 'dark');
+  if (btnLight) btnLight.classList.toggle('active', currentTheme === 'light');
+}, 50);
 
 // Initial application
 document.documentElement.setAttribute('data-theme', currentTheme);
@@ -2476,10 +2567,12 @@ const titleDict = {
   workspace: 'Study Workspace — Side by Side PDF & Ground Truth',
   subjects: 'Coursework Catalog',
   download: 'Scrape & Index Coursework',
+  upload: 'Upload Study Material & Question Papers',
   notes: 'My Notes Library'
 };
 
 function navigate(navBtn, pageId) {
+  if (pageId === 'upload') loadUploadedDocuments();
   $$('.nav-item').forEach(item => item.classList.remove('active'));
   if (navBtn) navBtn.classList.add('active');
 
@@ -3516,16 +3609,16 @@ async function loadFirstAvailableDoc() {
 }
 
 /* ─── PDF MODAL ─── */
-function launchPdfModal(subcode, filename) {
-  if (!subcode) {
+function launchPdfModal(subcode, filename, customUrl) {
+  if (!subcode && !customUrl) {
     const active = $('#notesSubjectPicker').value;
     subcode = active || (allSubjects[0] ? allSubjects[0].code : 'BCS503');
   }
 
-  $('#pdfModalSubcode').textContent = subcode;
+  $('#pdfModalSubcode').textContent = subcode || 'VAULT';
   $('#pdfModalFilename').textContent = filename;
 
-  const url = `/api/notes/${encodeURIComponent(subcode)}/${encodeURIComponent(filename)}`;
+  const url = customUrl || `/api/notes/${encodeURIComponent(subcode)}/${encodeURIComponent(filename)}`;
   $('#pdfFrame').src = url;
   $('#pdfDirectDownloadAnchor').href = url;
 
@@ -3823,6 +3916,235 @@ function initHeroHeadlineTypewriter() {
   await checkApiHealth();
   await loadStats();
 })();
+
+  
+/* ─── STUDY MATERIAL UPLOAD & VAULT MANAGER ─── */
+let selectedUploadFile = null;
+let allVaultDocuments = [];
+
+// Drag and drop listeners
+function setupUploadDropzone() {
+  const dropzone = $('#uploadDropzone');
+  if (!dropzone) return;
+
+  ['dragenter', 'dragover'].forEach(name => {
+    dropzone.addEventListener(name, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add('dragover');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(name => {
+    dropzone.addEventListener(name, e => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('dragover');
+    });
+  });
+
+  dropzone.addEventListener('drop', e => {
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      processSelectedFile(files[0]);
+    }
+  });
+}
+
+function handleFileSelect(e) {
+  const files = e.target.files;
+  if (files && files.length > 0) {
+    processSelectedFile(files[0]);
+  }
+}
+
+function processSelectedFile(file) {
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    displayToast('Invalid File Type', 'Strictly PDF files (.pdf) only are accepted.', 'error');
+    clearSelectedFile();
+    return;
+  }
+  selectedUploadFile = file;
+  const info = $('#selectedFileInfo');
+  const nameEl = $('#selectedFileName');
+  if (info && nameEl) {
+    nameEl.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+    info.style.display = 'flex';
+  }
+  const titleInput = $('#inputUploadTitle');
+  if (titleInput && !titleInput.value) {
+    titleInput.value = file.name.replace(/\.pdf$/i, '').replace(/[_-]/g, ' ');
+  }
+}
+
+function clearSelectedFile(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  selectedUploadFile = null;
+  const input = $('#pdfFileInput');
+  if (input) input.value = '';
+  const info = $('#selectedFileInfo');
+  if (info) info.style.display = 'none';
+}
+
+async function submitPdfUpload() {
+  if (!selectedUploadFile) {
+    displayToast('Missing File', 'Please select or drag a PDF document to upload.', 'warning');
+    return;
+  }
+  const subCode = ($('#inputUploadSubjectCode').value || '').trim();
+  if (!subCode) {
+    displayToast('Missing Subject Code', 'Please enter the subject code (e.g. BCS502).', 'warning');
+    $('#inputUploadSubjectCode').focus();
+    return;
+  }
+
+  const scheme = ($('#inputUploadScheme').value || '2022 Scheme').trim();
+  const sem = ($('#inputUploadSem').value || 'Sem 5').trim();
+  const materialType = $('#inputUploadType').value;
+  const title = ($('#inputUploadTitle').value || selectedUploadFile.name).trim();
+
+  const formData = new FormData();
+  formData.append('file', selectedUploadFile);
+  formData.append('scheme', scheme);
+  formData.append('subject_code', subCode);
+  formData.append('sem', sem);
+  formData.append('material_type', materialType);
+  formData.append('title', title);
+
+  const btn = $('#btnSubmitUpload');
+  const origHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = `<span class="breathing-pulse-dot" style="background:#fff;"></span> Ingesting & Indexing PDF...`;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || 'Upload failed');
+    }
+    const data = await res.json();
+    displayToast('Ingestion Started', `${selectedUploadFile.name} registered. Indexing into ChromaDB in background.`, 'success');
+    clearSelectedFile();
+    loadUploadedDocuments();
+  } catch (err) {
+    displayToast('Upload Error', err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = origHtml;
+  }
+}
+
+async function loadUploadedDocuments() {
+  try {
+    const res = await callApi('/api/documents');
+    allVaultDocuments = res.documents || [];
+    renderVaultDocuments(allVaultDocuments);
+  } catch (err) {
+    console.error('Failed loading vault documents:', err);
+  }
+}
+
+function filterVaultDocuments() {
+  const query = ($('#vaultSearchInput').value || '').toLowerCase().trim();
+  const typeFilter = $('#vaultTypeFilter').value;
+
+  const filtered = allVaultDocuments.filter(doc => {
+    const matchesQuery = !query || 
+      doc.subject_code.toLowerCase().includes(query) ||
+      (doc.title && doc.title.toLowerCase().includes(query)) ||
+      (doc.file_name && doc.file_name.toLowerCase().includes(query));
+    const matchesType = !typeFilter || doc.material_type === typeFilter;
+    return matchesQuery && matchesType;
+  });
+
+  renderVaultDocuments(filtered);
+}
+
+function renderVaultDocuments(list) {
+  const container = $('#vaultDocumentsList');
+  const countEl = $('#vaultDocCount');
+  if (countEl) countEl.textContent = list.length;
+  if (!container) return;
+
+  if (list.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 10px; opacity: 0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        <div>No matching study materials found.</div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(doc => {
+    const isQp = doc.material_type.includes('Question');
+    const badgeColor = isQp ? 'var(--accent)' : 'var(--success)';
+    const sizeKb = (doc.file_size_bytes / 1024).toFixed(1);
+
+    return `
+      <div class="card" style="padding: 14px 16px; background: var(--bg-surface); border: 1px solid var(--border-default); display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: transform 0.15s ease;">
+        <div style="flex: 1; min-width: 0;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+            <span style="font-weight: 700; font-size: 13px; color: var(--text-primary);">${escapeText(doc.title || doc.file_name)}</span>
+            <span style="font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: rgba(var(--theme-rgb), 0.15); color: ${badgeColor}; border: 1px solid rgba(var(--theme-rgb), 0.3);">${escapeText(doc.material_type)}</span>
+            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--bg-input); color: var(--text-secondary); border: 1px solid var(--border-subtle);">${escapeText(doc.subject_code)}</span>
+            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--bg-input); color: var(--text-secondary);">${escapeText(doc.scheme)}</span>
+            <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--bg-input); color: var(--text-secondary);">${escapeText(doc.sem)}</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); display: flex; gap: 12px; align-items: center;">
+            <span>${escapeText(doc.file_name)}</span>
+            <span>•</span>
+            <span>${sizeKb} KB</span>
+            ${doc.page_count ? `<span>•</span><span>${doc.page_count} Pages</span>` : ''}
+            <span>•</span>
+            <span style="color: ${doc.is_indexed ? 'var(--success)' : 'var(--warning)'}; font-weight: 600;">
+              ${doc.is_indexed ? '✓ Indexed in Vector DB' : '⏳ Ingestion Pending'}
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <button class="btn btn-secondary btn-sm" onclick="viewUploadedPdf('${doc.id}', '${escapeText(doc.title || doc.file_name)}')" title="View in PDF Viewer">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span>View</span>
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="deleteVaultDocument('${doc.id}')" title="Delete Document" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.3);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function viewUploadedPdf(docId, title) {
+  const viewUrl = `${API_BASE}/api/documents/${docId}/view`;
+  launchPdfModal('VAULT', title || 'Document.pdf', viewUrl);
+}
+
+async function deleteVaultDocument(docId) {
+  if (!confirm('Are you sure you want to remove this document from the vault?')) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/documents/${docId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to delete document');
+    displayToast('Document Removed', 'File deleted from vault and database.', 'info');
+    loadUploadedDocuments();
+  } catch (err) {
+    displayToast('Delete Failed', err.message, 'error');
+  }
+}
+
+// Hook setup on DOMContentLoaded
+window.addEventListener('DOMContentLoaded', () => {
+  setupUploadDropzone();
+  loadUploadedDocuments();
+});
 
   </script>
 </body>
