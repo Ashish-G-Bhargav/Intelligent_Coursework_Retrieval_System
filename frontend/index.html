@@ -2277,9 +2277,592 @@ html, body {
   .workspace-panes-row .ws-pdf-column { width: 100% !important; height: 50%; }
 }
 
-  </style>
+  
+/* ══════════════════════════════════════════════════════════════
+   LIVING ANIMATED AURORA BACKGROUND (WARM CRIMSON, CORAL, AMBER)
+   Designed according to Superdesign specifications
+   ══════════════════════════════════════════════════════════════ */
+.aurora-canvas-wrap {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #07080a;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  transition: background-color 0.3s ease;
+}
+
+[data-theme="light"] .aurora-canvas-wrap {
+  background-color: #f8fafc;
+}
+
+.aurora-blade {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+[data-theme="light"] .aurora-blade {
+  mix-blend-mode: multiply !important;
+  opacity: 0.18 !important;
+}
+
+.aurora-blade-1 {
+  width: 980px;
+  height: 520px;
+  top: 5%;
+  left: 10%;
+  background: radial-gradient(ellipse at 40% 50%, #ff2f3a 0%, #ff6b4a 45%, #ffb347 70%, transparent 85%);
+  animation: auroraDrift1 18s ease-in-out infinite alternate;
+  opacity: 0.85;
+}
+
+.aurora-blade-2 {
+  width: 880px;
+  height: 440px;
+  top: 20%;
+  right: 5%;
+  background: radial-gradient(ellipse at 50% 45%, #ff3847 0%, #ff6b4a 40%, #ffb347 75%, transparent 85%);
+  animation: auroraDrift2 22s ease-in-out infinite alternate;
+  opacity: 0.75;
+}
+
+.aurora-blade-3 {
+  width: 780px;
+  height: 400px;
+  top: -10%;
+  left: 35%;
+  background: radial-gradient(ellipse at 60% 50%, #ff2f3a 0%, #ff5238 50%, #ffa733 75%, transparent 90%);
+  animation: auroraDrift3 15s ease-in-out infinite alternate;
+  opacity: 0.90;
+}
+
+@keyframes auroraDrift1 {
+  0% { transform: translate(0, 0) rotate(-12deg) scale(1.05); opacity: 0.85; }
+  50% { transform: translate(45px, 30px) rotate(-6deg) scale(0.95); opacity: 0.70; }
+  100% { transform: translate(-35px, -20px) rotate(-15deg) scale(1.1); opacity: 0.90; }
+}
+
+@keyframes auroraDrift2 {
+  0% { transform: translate(0, 0) rotate(18deg) scale(1); opacity: 0.75; }
+  50% { transform: translate(-40px, 25px) rotate(12deg) scale(1.12); opacity: 0.90; }
+  100% { transform: translate(30px, -35px) rotate(22deg) scale(0.92); opacity: 0.65; }
+}
+
+@keyframes auroraDrift3 {
+  0% { transform: translate(0, 0) rotate(5deg) scale(1.1); opacity: 0.90; }
+  50% { transform: translate(-30px, -25px) rotate(0deg) scale(0.95); opacity: 0.75; }
+  100% { transform: translate(35px, 20px) rotate(10deg) scale(1.05); opacity: 0.85; }
+}
+
+.aurora-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, transparent 35%, #07080a 95%);
+  pointer-events: none;
+}
+
+[data-theme="light"] .aurora-vignette {
+  background: radial-gradient(circle at 50% 45%, transparent 40%, rgba(248, 250, 252, 0.9) 95%);
+}
+
+.aurora-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Floating Pill Nav */
+.floating-pill-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: rgba(10, 12, 16, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-radius: var(--r-pill);
+  padding: 8px 16px 8px 18px;
+  max-width: 860px;
+  margin: 0 auto 32px auto;
+  transition: all 0.25s ease;
+}
+
+[data-theme="light"] .floating-pill-nav-bar {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(220, 38, 38, 0.18) !important;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+.floating-pill-center-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+@media (max-width: 768px) {
+  .floating-pill-center-links {
+    display: none;
+  }
+}
+
+.floating-pill-center-links .nav-item-link {
+  font-family: 'Inter', var(--font-main);
+  font-size: 14px;
+  font-weight: 500;
+  color: #9c9c9d;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+
+.floating-pill-center-links .nav-item-link:hover {
+  color: #ffffff;
+}
+
+[data-theme="light"] .floating-pill-center-links .nav-item-link {
+  color: #64748b;
+}
+
+[data-theme="light"] .floating-pill-center-links .nav-item-link:hover {
+  color: #dc2626;
+}
+
+.nav-pill-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f4f4f5;
+  color: #18181b;
+  font-family: 'Inter', var(--font-main);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+.nav-pill-download-btn:hover {
+  background: #ffffff;
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .nav-pill-download-btn {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+[data-theme="light"] .nav-pill-download-btn:hover {
+  background: #b91c1c;
+}
+
+/* Eyebrow Chip */
+.aurora-eyebrow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 47, 58, 0.08);
+  border: 1px solid rgba(255, 47, 58, 0.28);
+  border-radius: var(--r-pill);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #ff6b4a;
+  margin-bottom: 22px;
+}
+
+.aurora-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ff2f3a;
+  box-shadow: 0 0 10px #ff2f3a;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* H1 Headline */
+.aurora-headline {
+  font-family: 'Inter', var(--font-main);
+  font-size: clamp(36px, 4.6vw, 64px) !important;
+  font-weight: 600 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -1.8px !important;
+  color: #ffffff !important;
+  text-align: center;
+  max-width: 890px;
+  margin: 0 auto 18px auto;
+  text-wrap: balance;
+}
+
+[data-theme="light"] .aurora-headline {
+  color: #09090b !important;
+}
+
+.aurora-accent-word {
+  background: linear-gradient(135deg, #ffb347 0%, #ff6b4a 50%, #ff2f3a 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block;
+}
+
+[data-theme="light"] .aurora-accent-word {
+  background: linear-gradient(135deg, #ea580c 0%, #dc2626 60%, #991b1b 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Subtitle */
+.aurora-subtitle {
+  font-family: 'Inter', var(--font-main);
+  font-size: 18px;
+  font-weight: 400;
+  color: #9c9c9d;
+  letter-spacing: 0.2px;
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 26px auto;
+  line-height: 1.6;
+}
+
+[data-theme="light"] .aurora-subtitle {
+  color: #475569 !important;
+}
+
+/* Keycap-Raised OS Download Buttons */
+.keycap-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.keycap-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #e6e6e6;
+  color: #2f3031;
+  font-family: 'Inter', var(--font-main);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  box-shadow: 
+    0 0 0 2px #07080a,
+    0 0 14px rgba(255, 255, 255, 0.19),
+    inset 0 1.5px 0 #ffffff,
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.45);
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.keycap-btn:hover {
+  transform: translateY(-2px);
+  background: #f0f0f0;
+  box-shadow: 
+    0 0 0 2px #07080a,
+    0 0 22px rgba(255, 255, 255, 0.30),
+    inset 0 1.5px 0 #ffffff,
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.45);
+}
+
+.keycap-btn:active {
+  transform: translateY(1px);
+}
+
+[data-theme="light"] .keycap-btn {
+  background: #ffffff;
+  color: #09090b;
+  box-shadow: 
+    0 0 0 1px #cbd5e1,
+    0 4px 14px rgba(220, 38, 38, 0.09),
+    inset 0 1.5px 0 #ffffff,
+    inset 0 -1.5px 0 rgba(0, 0, 0, 0.10);
+}
+
+[data-theme="light"] .keycap-btn:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+  box-shadow: 
+    0 0 0 1.5px #dc2626,
+    0 6px 18px rgba(220, 38, 38, 0.16);
+}
+
+.keycap-caption {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #9c9c9d;
+  text-align: center;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+[data-theme="light"] .keycap-caption {
+  color: #64748b;
+}
+
+/* Dark-Glass Command Launcher Mockup */
+.command-launcher-mockup {
+  max-width: 780px;
+  width: 100%;
+  margin: 36px auto 0 auto;
+  background: rgba(10, 13, 20, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 14px;
+  box-shadow: 
+    0 24px 60px -10px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(255, 47, 58, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  transition: all 0.25s ease;
+  text-align: left;
+}
+
+[data-theme="light"] .command-launcher-mockup {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(220, 38, 38, 0.24) !important;
+  box-shadow: 
+    0 20px 50px -10px rgba(0, 0, 0, 0.08),
+    0 0 30px rgba(220, 38, 38, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+.launcher-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+[data-theme="light"] .launcher-input-row {
+  border-bottom-color: rgba(220, 38, 38, 0.12) !important;
+}
+
+.launcher-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 14.5px;
+  font-family: 'Inter', var(--font-main);
+}
+
+[data-theme="light"] .launcher-search-input {
+  color: #09090b !important;
+}
+
+.launcher-caret {
+  display: inline-block;
+  width: 2px;
+  height: 18px;
+  background: #ff6b4a;
+  box-shadow: 0 0 8px #ff6b4a;
+  animation: blinkCaret 1s infinite;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+
+@keyframes blinkCaret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.launcher-mode-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 47, 58, 0.12);
+  color: #ff6b4a;
+  border: 1px solid rgba(255, 47, 58, 0.3);
+}
+
+[data-theme="light"] .launcher-mode-chip {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.launcher-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: #a1a1aa;
+}
+
+[data-theme="light"] .launcher-result-row {
+  color: #475569;
+}
+
+.launcher-result-row:hover,
+.launcher-result-row.active {
+  background: rgba(255, 47, 58, 0.12);
+  border: 1px solid rgba(255, 47, 58, 0.28);
+  color: #ffffff;
+}
+
+[data-theme="light"] .launcher-result-row:hover,
+[data-theme="light"] .launcher-result-row.active {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.24);
+  color: #09090b;
+}
+
+.launcher-result-row.active .launcher-icon {
+  color: #ff6b4a;
+}
+
+[data-theme="light"] .launcher-result-row.active .launcher-icon {
+  color: #dc2626;
+}
+
+.launcher-shortcut-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  color: #9c9c9d;
+}
+
+[data-theme="light"] .launcher-shortcut-chip {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.10);
+  color: #64748b;
+}
+
+.launcher-footer-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: rgba(5, 7, 10, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #9c9c9d;
+}
+
+[data-theme="light"] .launcher-footer-strip {
+  background: #f8fafc;
+  border-top-color: #e2e8f0;
+  color: #64748b;
+}
+
+.floating-ph-badge {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10, 12, 16, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 12px;
+  padding: 8px 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  z-index: 40;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 12px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.floating-ph-badge:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 75, 74, 0.4);
+}
+
+[data-theme="light"] .floating-ph-badge {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(220, 38, 38, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  color: #09090b;
+}
+
+[data-theme="light"] .floating-ph-badge .ph-title {
+  color: #09090b !important;
+}
+
+.ghost-bottom-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 32px auto 0 auto;
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-pill);
+  color: #9c9c9d;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.ghost-bottom-pill:hover {
+  border-color: #ff6b4a;
+  color: #ffffff;
+  background: rgba(255, 107, 74, 0.08);
+}
+
+[data-theme="light"] .ghost-bottom-pill {
+  border-color: rgba(220, 38, 38, 0.30);
+  color: #64748b;
+}
+
+[data-theme="light"] .ghost-bottom-pill:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.06);
+}
+
+</style>
 </head>
 <body>
+  <!-- LIVING ANIMATED AURORA BACKGROUND (WARM CRIMSON, CORAL, AMBER) -->
+  <div class="aurora-canvas-wrap">
+    <div class="aurora-blade aurora-blade-1"></div>
+    <div class="aurora-blade aurora-blade-2"></div>
+    <div class="aurora-blade aurora-blade-3"></div>
+    <div class="aurora-vignette"></div>
+    <div class="aurora-grain"></div>
+  </div>
+
   <!-- Animated Background Canvas -->
   <canvas id="circuitCanvas"></canvas>
 
@@ -2381,55 +2964,154 @@ html, body {
         <!-- ══════════ 1. DASHBOARD PAGE ══════════ -->
         <div class="page active" id="page-dashboard">
           <!-- Hero Section with Animated Omni-Search -->
-          <div class="editorial-hero reveal-on-scroll">
-            <div class="hero-tagline">
-              <span class="hero-red-dot"></span>
-              <span>Intelligent Coursework Retrieval</span>
-              <span class="zero-hallucination-pill">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                Zero Hallucination
-              </span>
+          <!-- Hero Section: Animated Aurora Background Dark Developer-Tool Landing -->
+          <div class="editorial-hero reveal-on-scroll" style="text-align: center; max-width: 980px; margin: 0 auto; padding-top: 10px;">
+            <!-- Floating Pill Nav -->
+            <nav class="floating-pill-nav-bar">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <!-- Warm Diamond Logo Glyph -->
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 0 6px #ff6b4a);">
+                  <path d="M12 2L21.5 12L12 22L2.5 12L12 2Z" fill="url(#warmDiamondGrad)" stroke="#ff6b4a" stroke-width="1.2"/>
+                  <defs>
+                    <linearGradient id="warmDiamondGrad" x1="2.5" y1="2" x2="21.5" y2="22" gradientUnits="userSpaceOnUse">
+                      <stop stop-color="#ffb347"/>
+                      <stop offset="0.5" stop-color="#ff6b4a"/>
+                      <stop offset="1" stop-color="#ff2f3a"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <span style="font-family: 'Inter', var(--font-main); font-weight: 600; font-size: 14.5px; color: #ffffff; letter-spacing: -0.3px;">EduRAG</span>
+              </div>
+
+              <div class="floating-pill-center-links">
+                <a href="#workspace" onclick="goTo('workspace'); return false;" class="nav-item-link">Product</a>
+                <a href="#subjects" onclick="goTo('subjects'); return false;" class="nav-item-link">Docs</a>
+                <a href="#upload" onclick="goTo('upload'); return false;" class="nav-item-link">Pricing</a>
+                <a href="#notes" onclick="goTo('notes'); return false;" class="nav-item-link">Changelog</a>
+                <a href="#ask" onclick="goTo('ask'); return false;" class="nav-item-link">Blog</a>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <a href="#login" onclick="displayToast('Session Active', 'Connected to VTU 2022 Scheme cluster'); return false;" class="nav-item-link" style="font-size: 13.5px;">Log in</a>
+                <a href="#workspace" onclick="goTo('workspace'); return false;" class="nav-pill-download-btn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.9.04-2.01.6-2.65 1.35-.57.65-1.07 1.73-.99 2.76 1.01.08 2.01-.49 2.63-1.24z"/></svg>
+                  <span>Download</span>
+                </a>
+              </div>
+            </nav>
+
+            <!-- Eyebrow Chip -->
+            <div class="aurora-eyebrow-chip">
+              <span class="aurora-chip-dot"></span>
+              <span>v2.0 — now with an AI command bar</span>
             </div>
 
-            <h1 class="hero-heading" id="heroHeadline">
-              <span id="heroHeadlineText">Syllabus-grounded AI retrieval engineered for serious VTU revision.</span>
+            <!-- Two-Line H1 Headline with Warm Gradient Accent Word -->
+            <h1 class="aurora-headline">
+              Syllabus-grounded AI retrieval, one <span class="aurora-accent-word">keystroke</span> away.
             </h1>
 
-            <p class="hero-text">
-              Skip searching through hundreds of scattered module PDFs. Ask questions directly against your official Visvesvaraya Technological University syllabus with synchronized slide citations.
+            <!-- Muted Subtitle -->
+            <p class="aurora-subtitle">
+              Official Visvesvaraya Technological University coursework notes indexed with millisecond precision, verified citations, and instant zero-hallucination answers.
             </p>
 
-            <!-- OmniSearch Input Bar with Rotating Conic-Gradient Border -->
-            <div class="omni-search-container">
-              <div class="omni-search-inner">
-                <svg class="omni-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <!-- Keycap-Raised OS Download Buttons Row -->
+            <div class="keycap-btn-row">
+              <button type="button" onclick="goTo('workspace')" class="keycap-btn" title="Open Desktop Workspace for Mac">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 1.01-2.87-.9.04-2.01.6-2.65 1.35-.57.65-1.07 1.73-.99 2.76 1.01.08 2.01-.49 2.63-1.24z"/></svg>
+                <span>Download for Mac</span>
+              </button>
+              <button type="button" onclick="goTo('workspace')" class="keycap-btn" title="Open Desktop Workspace for Windows">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.95-1.801"/></svg>
+                <span>Download for Windows</span>
+              </button>
+            </div>
+            <div class="keycap-caption">
+              <span>brew install edurag</span>
+              <span style="opacity: 0.4;">•</span>
+              <span>Install via homebrew or winget</span>
+            </div>
+
+            <!-- Dark-Glass Command-Bar / Launcher Mockup -->
+            <div class="command-launcher-mockup">
+              <div class="launcher-input-row">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b4a" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input
                   type="text"
                   id="heroSearchInput"
-                  class="omni-search-input"
+                  class="launcher-search-input"
                   placeholder="Ask any syllabus question (e.g. Banker's Algorithm, 3-way handshake, 2NF/3NF)..."
                   onkeydown="if(event.key==='Enter') executeHeroQuery()"
                 />
-                <button class="btn btn-primary omni-search-btn" onclick="executeHeroQuery()">
+                <span class="launcher-caret"></span>
+                <span class="launcher-mode-chip">Command</span>
+                <button class="btn btn-primary btn-sm" onclick="executeHeroQuery()" style="padding: 6px 14px; font-size: 12px;">
                   <span>Ask AI</span>
-                  <kbd class="kbd-badge" style="background: rgba(0,0,0,0.3); color:#fff; border:none; margin-left:4px;">↵</kbd>
+                  <kbd style="background: rgba(0,0,0,0.3); color:#fff; border:none; margin-left:4px; font-family: var(--font-mono);">↵</kbd>
                 </button>
+              </div>
+
+              <!-- Interactive Result Rows -->
+              <div style="padding: 6px 0;">
+                <div class="launcher-result-row active" onclick="quickLaunchQuery('Explain Banker\'s Algorithm for deadlock avoidance in OS')">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg class="launcher-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                    <span style="font-size: 13.5px; font-weight: 500;">Explain Banker's Algorithm for deadlock avoidance</span>
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: #ff6b4a;">os-deadlock</span>
+                  </div>
+                  <span class="launcher-shortcut-chip">Cmd+Enter</span>
+                </div>
+
+                <div class="launcher-result-row" onclick="quickLaunchQuery('What is DBMS normalization 1NF, 2NF, 3NF, BCNF with examples?')">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg class="launcher-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                    <span style="font-size: 13.5px; font-weight: 500;">DBMS Normalization (1NF, 2NF, 3NF, BCNF) with rules</span>
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: #9c9c9d;">dbms-schema</span>
+                  </div>
+                  <span class="launcher-shortcut-chip">Cmd+B</span>
+                </div>
+
+                <div class="launcher-result-row" onclick="quickLaunchQuery('Explain 3-way handshake in TCP connection establishment')">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg class="launcher-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                    <span style="font-size: 13.5px; font-weight: 500;">TCP 3-Way Handshake connection state protocol</span>
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: #9c9c9d;">tcp-syn-ack</span>
+                  </div>
+                  <span class="launcher-shortcut-chip">Cmd+O</span>
+                </div>
+
+                <div class="launcher-result-row" onclick="quickLaunchQuery('Explain Dijkstra\'s single source shortest path algorithm')">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <svg class="launcher-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+                    <span style="font-size: 13.5px; font-weight: 500;">Dijkstra's single source shortest path algorithm</span>
+                    <span style="font-family: var(--font-mono); font-size: 11px; color: #9c9c9d;">graph-algo</span>
+                  </div>
+                  <span class="launcher-shortcut-chip">Cmd+K</span>
+                </div>
+              </div>
+
+              <!-- Footer Strip with Mono Hints -->
+              <div class="launcher-footer-strip">
+                <div>↑/↓ navigate • ↵ ask ai • esc dismiss</div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <span style="width: 6px; height: 6px; border-radius: 50%; background: #ff2f3a;"></span>
+                  <span>EduRAG v2.0</span>
+                </div>
               </div>
             </div>
 
-            <!-- Quick Exam Prep Prompt Chips -->
-            <div style="display: flex; align-items: center; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px;">Quick Revision:</span>
-              <button class="prompt-tag-btn" onclick="quickLaunchQuery('Explain Banker\'s Algorithm for deadlock avoidance in OS')">Deadlock Avoidance</button>
-              <button class="prompt-tag-btn" onclick="quickLaunchQuery('What is DBMS normalization 1NF, 2NF, 3NF, BCNF with examples?')">DBMS Normalization</button>
-              <button class="prompt-tag-btn" onclick="quickLaunchQuery('Explain 3-way handshake in TCP connection establishment')">TCP 3-Way Handshake</button>
-              <button class="prompt-tag-btn" onclick="quickLaunchQuery('Explain Dijkstra\'s single source shortest path algorithm')">Dijkstra's Algorithm</button>
-              <button class="prompt-tag-btn" onclick="quickLaunchQuery('Explain BCNF and lossless join decomposition')">BCNF Decomposition</button>
+            <!-- Single Centered Ghost Pill -->
+            <div style="display: flex; justify-content: center;">
+              <a href="#stats" onclick="document.getElementById('statsSection').scrollIntoView({behavior: 'smooth'}); return false;" class="ghost-bottom-pill">
+                <span>Learn more</span>
+                <span>→</span>
+              </a>
             </div>
           </div>
 
           <!-- Live Telemetry / Stat Tiles with 3D Tilt -->
-          <div class="stats-strip reveal-on-scroll">
+          <div class="stats-strip reveal-on-scroll" id="statsSection">
             <div class="card stat-tile tilt-card" onclick="goTo('subjects')" title="Browse Catalog">
               <div class="stat-icon-wrap">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path></svg>
@@ -4700,5 +5382,14 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
   </script>
+  <!-- Floating Product Hunt Badge Card -->
+  <a href="https://www.producthunt.com" target="_blank" rel="noopener" class="floating-ph-badge" title="Featured on Product Hunt">
+    <div style="width: 22px; height: 22px; border-radius: 50%; background: #ff6b4a; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; color: #fff;">P</div>
+    <div>
+      <div style="font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: #9c9c9d; font-weight: 600;">Featured on</div>
+      <div class="ph-title" style="font-weight: 700; font-size: 12px; color: #fff; line-height: 1.1;">Product Hunt <span style="color: #ff6b4a; font-size: 10px; margin-left: 2px;">#1</span></div>
+    </div>
+  </a>
+
 </body>
 </html>
