@@ -3,8 +3,10 @@ EduRAG Document & Upload Metadata Database
 Powered by Python's built-in SQLite3 engine.
 """
 
+from datetime import datetime, timedelta
 import hashlib
 import logging
+import secrets
 import sqlite3
 import uuid
 from pathlib import Path
@@ -42,6 +44,34 @@ def init_db():
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_sub ON documents(subject_code)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_type ON documents(material_type)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_doc_hash ON documents(file_hash)")
+
+        # Google OAuth & User Profile Management
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id TEXT PRIMARY KEY,
+                google_id TEXT UNIQUE NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                name TEXT,
+                picture TEXT,
+                email_verified INTEGER DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)")
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_user_google ON users(google_id)")
+
+        # User Authentication Sessions
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                token TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                expires_at TIMESTAMP NOT NULL,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+            )
+        """)
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_session_user ON sessions(user_id)")
         conn.commit()
 
 
@@ -149,3 +179,88 @@ def delete_document(doc_id: str) -> Optional[str]:
     except Exception as e:
         logger.warning(f"Failed deleting file {file_path}: {e}")
     return file_path
+
+
+# ---------------------------------------------------------------------------
+# Google Auth & Session Storage
+# ---------------------------------------------------------------------------
+def upsert_google_user(
+    google_id: str,
+    email: str,
+    name: Optional[str] = None,
+    picture: Optional[str] = None,
+    email_verified: bool = True,
+) -> Dict[str, Any]:
+    """Insert or update a Google authenticated user record."""
+    init_db()
+    norm_email = email.strip().lower()
+    now_iso = datetime.utcnow().isoformat()
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE google_id = ? OR email = ?", (google_id, norm_email))
+        row = cursor.fetchone()
+        if row:
+            user_id = row["id"]
+            cursor.execute("""
+                UPDATE users
+                SET google_id = ?, name = COALESCE(?, name), picture = COALESCE(?, picture),
+                    email_verified = ?, last_login = ?
+                WHERE id = ?
+            """, (google_id, name, picture, 1 if email_verified else 0, now_iso, user_id))
+        else:
+            user_id = str(uuid.uuid4())
+            cursor.execute("""
+                INSERT INTO users (id, google_id, email, name, picture, email_verified, created_at, last_login)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (user_id, google_id, norm_email, name or "", picture or "", 1 if email_verified else 0, now_iso, now_iso))
+        conn.commit()
+        cursor.execute("SELECT id, google_id, email, name, picture, email_verified, created_at, last_login FROM users WHERE id = ?", (user_id,))
+        return dict(cursor.fetchone())
+
+
+def create_user_session(user_id: str, duration_days: int = 30) -> str:
+    """Generate and store a cryptographic session token for an authenticated user."""
+    init_db()
+    token = secrets.token_urlsafe(32)
+    expires_at = (datetime.utcnow() + timedelta(days=duration_days)).isoformat()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO sessions (token, user_id, expires_at)
+            VALUES (?, ?, ?)
+        """, (token, user_id, expires_at))
+        conn.commit()
+    return token
+
+
+def get_user_from_session(token: str) -> Optional[Dict[str, Any]]:
+    """Retrieve the user associated with a valid, non-expired session token."""
+    if not token or not token.strip():
+        return None
+    init_db()
+    now_iso = datetime.utcnow().isoformat()
+    with sqlite3.connect(DB_PATH) as conn:
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT u.id, u.google_id, u.email, u.name, u.picture, u.email_verified, u.created_at, u.last_login
+            FROM sessions s
+            JOIN users u ON s.user_id = u.id
+            WHERE s.token = ? AND s.expires_at > ?
+        """, (token.strip(), now_iso))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def delete_session(token: str) -> bool:
+    """Revoke and delete a session token on logout."""
+    if not token:
+        return False
+    init_db()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM sessions WHERE token = ?", (token.strip(),))
+        deleted = cursor.rowcount > 0
+        conn.commit()
+        return deleted

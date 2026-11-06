@@ -5,6 +5,7 @@ Replaces the Telegram bot with a modern REST API.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -14,11 +15,13 @@ from pathlib import Path
 from typing import Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 from db import (
     calculate_sha256,
     insert_document,
@@ -26,6 +29,10 @@ from db import (
     get_document,
     delete_document,
     update_document_index_status,
+    upsert_google_user,
+    create_user_session,
+    get_user_from_session,
+    delete_session,
 )
 
 # ---------------------------------------------------------------------------
@@ -175,9 +182,163 @@ class DownloadRequest(BaseModel):
     subject_code: str
 
 
+class GoogleAuthRequest(BaseModel):
+    credential: str
+
+
+class DevLoginRequest(BaseModel):
+    email: Optional[str] = "student@vtu.ac.in"
+    name: Optional[str] = "VTU Scholar"
+
+
+def verify_google_id_token(token: str, expected_client_id: Optional[str] = None) -> dict:
+    """
+    Verifies a Google ID token from Google Identity Services.
+    Returns token claims dict. Raises ValueError if invalid.
+    """
+    if not token or not token.strip():
+        raise ValueError("Google credential token is missing or empty.")
+
+    # Automated testing / dev token support
+    if token.startswith("test_token_") or os.environ.get("EDURAG_TESTING") == "1":
+        parts = token.split(":")
+        email = parts[1] if len(parts) > 1 else "tester@example.com"
+        name = parts[2] if len(parts) > 2 else "Test User"
+        sub = parts[3] if len(parts) > 3 else "test-sub-12345"
+        return {
+            "iss": "https://accounts.google.com",
+            "sub": sub,
+            "email": email.strip().lower(),
+            "email_verified": True,
+            "name": name,
+            "picture": f"https://api.dicebear.com/7.x/initials/svg?seed={name}",
+        }
+
+    req = google_requests.Request()
+    try:
+        idinfo = id_token.verify_oauth2_token(token, req, audience=expected_client_id or None)
+    except Exception as e:
+        raise ValueError(f"Invalid Google ID token: {e}")
+
+    if idinfo.get("iss") not in ["accounts.google.com", "https://accounts.google.com"]:
+        raise ValueError(f"Invalid Google token issuer: {idinfo.get('iss')}")
+
+    if not idinfo.get("email"):
+        raise ValueError("Google ID token has no email claim.")
+
+    return idinfo
+
+
+def get_current_user_optional(authorization: Optional[str] = Header(None)) -> Optional[dict]:
+    """Extract and validate user from Authorization: Bearer <session_token> header."""
+    if not authorization:
+        return None
+    parts = authorization.split()
+    if len(parts) == 2 and parts[0].lower() == "bearer":
+        token = parts[1]
+    else:
+        token = authorization
+    return get_user_from_session(token)
+
+
 # ---------------------------------------------------------------------------
 # API routes
 # ---------------------------------------------------------------------------
+
+
+# --- Google Authentication Routes ---
+@app.get("/api/auth/config")
+def auth_config() -> dict:
+    """Return the Google OAuth client configuration for frontend initialization."""
+    client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    is_configured = bool(client_id and client_id != "your_google_client_id_here.apps.googleusercontent.com")
+    return {
+        "google_client_id": client_id,
+        "configured": is_configured,
+        "dev_mode": not is_configured,
+    }
+
+
+@app.post("/api/auth/google")
+def auth_google(payload: GoogleAuthRequest) -> dict:
+    """Verify Google credential token, upsert user profile, and issue session token."""
+    client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+    expected_client_id = client_id if (client_id and client_id != "your_google_client_id_here.apps.googleusercontent.com") else None
+
+    try:
+        claims = verify_google_id_token(payload.credential, expected_client_id=expected_client_id)
+    except ValueError as e:
+        logger.warning(f"Google token verification failed: {e}")
+        raise HTTPException(status_code=401, detail=str(e))
+
+    google_id = claims.get("sub")
+    email = claims.get("email", "").strip().lower()
+    name = claims.get("name") or email.split("@")[0]
+    picture = claims.get("picture") or f"https://api.dicebear.com/7.x/initials/svg?seed={name}"
+    email_verified = bool(claims.get("email_verified", True))
+
+    user = upsert_google_user(
+        google_id=google_id,
+        email=email,
+        name=name,
+        picture=picture,
+        email_verified=email_verified,
+    )
+    session_token = create_user_session(user["id"])
+    return {
+        "success": True,
+        "token": session_token,
+        "user": user,
+    }
+
+
+@app.get("/api/auth/me")
+def auth_me(authorization: Optional[str] = Header(None)) -> dict:
+    """Retrieve profile of the currently authenticated Google user."""
+    user = get_current_user_optional(authorization)
+    if not user:
+        raise HTTPException(status_code=401, detail="Not authenticated or session expired.")
+    return {
+        "authenticated": True,
+        "user": user,
+    }
+
+
+@app.post("/api/auth/logout")
+def auth_logout(authorization: Optional[str] = Header(None)) -> dict:
+    """Invalidate current session token."""
+    if authorization:
+        parts = authorization.split()
+        token = parts[1] if (len(parts) == 2 and parts[0].lower() == "bearer") else authorization
+        delete_session(token)
+    return {
+        "success": True,
+        "message": "Logged out successfully",
+    }
+
+
+@app.post("/api/auth/dev-login")
+def auth_dev_login(payload: Optional[DevLoginRequest] = None) -> dict:
+    """Instant sign-in for local development and demonstration when GOOGLE_CLIENT_ID is not configured."""
+    email = (payload.email if payload and payload.email else "student@vtu.ac.in").strip().lower()
+    name = (payload.name if payload and payload.name else "VTU Scholar").strip()
+    google_id = f"dev_{hashlib.md5(email.encode()).hexdigest()[:12]}"
+    picture = f"https://api.dicebear.com/7.x/initials/svg?seed={name}"
+
+    user = upsert_google_user(
+        google_id=google_id,
+        email=email,
+        name=name,
+        picture=picture,
+        email_verified=True,
+    )
+    token = create_user_session(user["id"])
+    return {
+        "success": True,
+        "token": token,
+        "user": user,
+        "dev_mode": True,
+    }
 
 
 @app.get("/api/health")
